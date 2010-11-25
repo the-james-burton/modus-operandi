@@ -43,16 +43,14 @@
 					title="Start All"><span class="ui-icon ui-icon-play"></span></li>
 				<li id="stopAllButton" class="ui-state-default ui-corner-all ui-state-disabled"
 					title="Stop All"><span class="ui-icon ui-icon-stop"></span></li>
+				<li id="configureButton" class="ui-state-default ui-corner-all ui-state-disabled"
+					title="Update Configuration"><span class="ui-icon ui-icon-gear"></span></li>
 				<li id="logInOutButton" class="ui-state-default ui-corner-all"
 					title="Log in"><span class="ui-icon ui-icon-locked"></span></li>
-				<sec:authorize ifAllGranted="ROLE_ADMIN">
-					<c:if test="${empty services.processes}">
-						<li id="configureButton" class="ui-state-default ui-corner-all ui-state-disabled"
-							title="Update Configuration"><span class="ui-icon ui-icon-gear"></span></li>
-					</c:if>
-				</sec:authorize>
 			</ul>
-			<jsp:directive.include file="/WEB-INF/jsp/services-ajax.jsp"/>
+			<div id="serviceDetails">
+				<jsp:directive.include file="/WEB-INF/jsp/services-ajax.jsp"/>
+			</div>
 			<div id="validXHTML"><img src="images/maven-feather.png" alt="Maven"/><img src="images/valid-xhtml10-blue.png" alt="Valid XHTML"/></div>
 		</div>
 		<jsp:directive.include file="/WEB-INF/jsp/dialogues.jspf"/>

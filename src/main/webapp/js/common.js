@@ -30,11 +30,7 @@ function __generic__error(XMLHttpRequest, textStatus, errorThrown) {
 
 function __refresh__success(data, textStatus) {
 	$('#refreshButton').removeClass('ui-state-active');
-	if ($("#noServices", data).size() == 0 && $("#noServices").size() > 0 && $("#resultsTableContainer", data).size() > 0) {
-		$("#icons").after($("#resultsTableContainer", data));
-		$("#noServices").remove();
-	}
-	$('#resultsTableContainer').empty().append($("#resultsTable", data));
+	$('#serviceDetails').html(data);
 	__runAllRefreshSuccessHandlers();
 }
 

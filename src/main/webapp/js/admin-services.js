@@ -85,7 +85,6 @@ function configure(event) {
 							$('#bulkInsertDialog').html('File loaded successfully.').dialog({
 									buttons: {
 										OK : function() {
-											$('#configureButton').remove();
 											$(this).dialog('close');
 											$('#bulkInsertDialog').remove();
 										}
