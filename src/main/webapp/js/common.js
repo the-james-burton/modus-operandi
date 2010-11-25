@@ -30,6 +30,10 @@ function __generic__error(XMLHttpRequest, textStatus, errorThrown) {
 
 function __refresh__success(data, textStatus) {
 	$('#refreshButton').removeClass('ui-state-active');
+	if ($("#noServices", data).size() == 0 && $("#noServices").size() > 0 && $("#resultsTableContainer", data).size() > 0) {
+		$("#icons").after($("#resultsTableContainer", data));
+		$("#noServices").remove();
+	}
 	$('#resultsTableContainer').empty().append($("#resultsTable", data));
 	__runAllRefreshSuccessHandlers();
 }
@@ -47,26 +51,28 @@ function __hideRefresh() {
 	$('#refreshing').removeClass('refreshing-now');
 }
 
-function refresh(method) {
-	$('#refreshButton').addClass('ui-state-active').removeClass(
-			'ui-state-error');
+function refresh(type) {
+	$('#refreshButton').addClass('ui-state-active').removeClass('ui-state-error');
+	var url = contextDir + 'services.view';
 	$.ajax( {
-		'url' : contextDir,
-		'type' : method,
-		'data' : ( {
-			'pid' : -1,
-			'windowTitle' : ''
-		}),
-		'cache' : false,
-		'success' : __refresh__success,
-		'error' : __refresh__error
+		url : url,
+		type : type,
+		data : {
+			pid : -1,
+			windowTitle : '',
+			rand : Math.random(),
+			ajax : true
+		},
+		cache : false,
+		success : __refresh__success,
+		error : __refresh__error
 	});
 	__showRefresh();
 }
 
 $(function() {
 	errorMarkup = $('#errorMessage > div');
-	setInterval('refresh(\'GET\')', 10000);
+	setInterval(function() { refresh('GET');}, 10000);
 	
 	$('#validXHTML').fadeIn('slow');
 	__addEventToRefreshSuccess(__hideRefresh);

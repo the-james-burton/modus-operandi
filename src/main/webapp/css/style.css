@@ -134,3 +134,6 @@ ul#icons span.ui-icon {
 #validXHTML img {
 	margin-left: 10px;
 }
+#fileLocation {
+	width: 300px;
+}

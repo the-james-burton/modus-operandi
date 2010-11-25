@@ -30,15 +30,15 @@ function startAll() {
 	$("tr:has(div[class*=startButton])").removeClass('stopped')
 	.addClass('starting');
 	$.ajax( {
-		'url' : contextDir,
-		'type' : 'POST',
-		'data' : ( {
-			'pid' : -2,
-			'startAll' : true
+		url : contextDir,
+		type : 'POST',
+		data : ( {
+			pid : -2,
+			startAll : true
 		}),
-		'cache' : false,
-		'success' : __startAll__success,
-		'error' : __startAll__error
+		cache : false,
+		success : __startAll__success,
+		error : __startAll__error
 	});
 	__showRefresh();
 }
@@ -46,17 +46,79 @@ function startAll() {
 function stopAll() {
 	$('#stopAllButton').addClass('ui-state-active').removeClass('ui-state-error');
 	$.ajax( {
-		'url' : contextDir,
-		'type' : 'POST',
-		'data' : ( {
-			'pid' : -2,
-			'stopAll' : true
+		url : contextDir,
+		type : 'POST',
+		data : ( {
+			pid : -2,
+			stopAll : true
 		}),
-		'cache' : false,
-		'success' : __stopAll__success,
-		'error' : __stopAll__error
+		cache : false,
+		success : __stopAll__success,
+		error : __stopAll__error
 	});
 	__showRefresh();
+}
+
+function configure(event) {
+	if ($('#bulkInsertDialog').size() == 0) {
+		var url= location.protocol + '//' + location.host + '/bulkInsert.view';
+		var dialogOptions = {
+			buttons: {
+				OK : function() {
+					var fileLocation = $.trim($('#fileLocation').removeClass('ui-state-error').val());
+					if (fileLocation == '') {
+						$('#fileLocation').addClass('ui-state-error');
+						return;
+					}
+					__showRefresh();
+					$.ajax( {
+						url : url,
+						type : 'POST',
+						data : ( {
+							fileName : fileLocation
+						}),
+						cache : false,
+						success : function (data, textStatus, XMLHttpRequest) {
+							if (data == 'OK') {
+								
+							}
+							$('#bulkInsertDialog').html('File loaded successfully.').dialog({
+									buttons: {
+										OK : function() {
+											$('#configureButton').remove();
+											$(this).dialog('close');
+											$('#bulkInsertDialog').remove();
+										}
+									}
+								}
+							);
+							__hideRefresh();
+						},
+						error : function(XMLHttpRequest, textStatus, errorThrown) {
+							alert('no luck...');
+							__hideRefresh();
+						}
+					});
+				},
+				Cancel : function() {
+					$(this).dialog('close');
+				}
+			},
+			open : function(event, ui) {
+				$('#bulkInsertDialog').load(url);
+			},
+			modal: true,
+			resizable: false,
+			bgiframe: true,
+			//height: '180',
+			width: 330,
+			title: 'Bulk Insert **Use With Care**'
+		};
+		$('body').append('<div id="bulkInsertDialog"><img src="/images/refreshing.gif" alt="loading"/></div>');
+		$('#bulkInsertDialog').dialog(dialogOptions);
+	} else {
+		$('#bulkInsertDialog').dialog('open');
+	}
 }
 
 function __setUpStop() {
@@ -173,6 +235,7 @@ $(function() {
 	$('#refreshButton').click(refreshAll).removeClass('ui-state-disabled');
 	$('#startAllButton').click(startAll).removeClass('ui-state-disabled');
 	$('#stopAllButton').click(stopAll).removeClass('ui-state-disabled');
+	$('#configureButton').click(configure).removeClass('ui-state-disabled');
 
 	//add new event handlers
 	__addEventToRefreshSuccess(__setUpStop);

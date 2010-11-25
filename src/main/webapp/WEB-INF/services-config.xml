@@ -1,693 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context" xmlns:security="http://www.springframework.org/schema/security"
-    xsi:schemaLocation="
-            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd"
->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
-    <context:property-placeholder location="classpath:prototype.properties" />
-    <security:global-method-security secured-annotations="enabled" jsr250-annotations="enabled" />
-    <!--  timer to refresh task list -->
-    <bean id="refreshProcessList" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-        <property name="delay" value="0" />
-        <property name="period" value="10000" />
-        <property name="runnable" ref="services" />
-    </bean>
+	<import resource="static-process-dao-config.xml"/>
+	<import resource="dyn-dan-config.xml"/>
 
-    <bean id="refreshProperties" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-        <property name="delay" value="0" />
-        <property name="period" value="50000" />
-        <property name="runnable" ref="propertiesLoader" />
-    </bean>
+	<context:property-placeholder location="classpath:prototype.properties" />
+	<security:global-method-security
+		secured-annotations="enabled" jsr250-annotations="enabled" />
+	<!--  timer to refresh task list -->
+	<bean id="refreshProcessList"
+		class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+		<property name="delay" value="0" />
+		<property name="period" value="10000" />
+		<property name="runnable" ref="services" />
+	</bean>
 
-    <bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
-        <property name="scheduledTimerTasks">
-            <list>
-                <ref bean="refreshProcessList" />
-                <ref bean="refreshProperties" />
-            </list>
-        </property>
-    </bean>
+	<bean id="refreshProperties"
+		class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+		<property name="delay" value="0" />
+		<property name="period" value="50000" />
+		<property name="runnable" ref="propertiesLoader" />
+	</bean>
 
-    <bean id="propertiesLoader" class="org.prototype.web.PropertiesLoader">
-        <property name="fileExtension" value="txt" />
-        <property name="inputDirectory" value="\\lonms03418\cruise\builds\analysis.finesse\reports\config\properties" />
-    </bean>
-    <bean id="abstractServices" class="org.prototype.monitor.AbstractProcessMonitorService" abstract="true">
-        <property name="refreshRatio" value="10" />
-        <property name="propertiesLoader" ref="propertiesLoader" />
-        <property name="processesConfig">
-            <map>
-                <!-- UAT -->
-                <entry key="LONMS08127" value-ref="allServers" />
+	<bean id="timerFactory"
+		class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+		<property name="scheduledExecutorTasks">
+			<list>
+				<ref bean="refreshProcessList" />
+				<ref bean="refreshProperties" />
+			</list>
+		</property>
+	</bean>
 
-                <!-- UAT2 -->
-                <entry key="LONMS01414" value-ref="markitwireOnly" />
+	<bean id="propertiesLoader" class="org.prototype.web.PropertiesLoader">
+		<property name="fileExtension" value="txt" />
+		<property name="inputDirectory"
+			value="\\lonms03418\cruise\builds\analysis.finesse\reports\config\properties" />
+	</bean>
 
-                <!-- BAU -->
-                <entry key="LON0184XNS" value-ref="processingServers" />
-                <entry key="LONMS01413" value-ref="pageServers" />
+	<bean id="abstractServices" class="org.prototype.monitor.AbstractProcessMonitorService" abstract="true">
+		<property name="refreshRatio" value="10" />
+		<property name="propertiesLoader" ref="propertiesLoader" />
+		<property name="processDAO" ref="processDAO"/>
+	</bean>
 
-                <!-- servers running just one rates instance -->
-                <entry key="LONMS01116" value-ref="ratesNVOnly" />
-                <entry key="LONMS03417" value-ref="ratesOnly" />
+	<bean id="services" class="org.prototype.monitor.jna.ProcessMonitorServiceJnaImpl" parent="abstractServices" />
 
-                <entry key="LONMW.*" value-ref="localTestingServices" />
-            </map>
-        </property>
-        <property name="environmentConfig">
-            <map>
-                <entry key="LONMS08127" value="UAT" />
-                <entry key="LONMS01414" value="UAT2" />
-
-                <entry key="LON0184XNS" value="BAU" />
-                <entry key="LONMS01413" value="BAU" />
-
-                <entry key="LONMS01116" value="UAT3" />
-                <entry key="LONMS03417" value="UAT4" />
-            </map>
-        </property>
-    </bean>
-
-    <bean id="services" class="org.prototype.monitor.jna.ProcessMonitorServiceJnaImpl" parent="abstractServices" />
-
-    <!-- 
-	<bean id="services" class="org.prototype.monitor.jnative.ProcessMonitorServiceJNativeImpl"
-		parent="abstractServices" />
-	
-	<bean id="services" class="org.prototype.monitor.exe.Services"
-		parent="abstractServices">
+	<!--
+		<bean id="services"
+		class="org.prototype.monitor.jnative.ProcessMonitorServiceJNativeImpl"
+		parent="abstractServices" /> <bean id="services"
+		class="org.prototype.monitor.exe.Services" parent="abstractServices">
 		<property name="killCommand" value="cmd /c %s\process -q " />
 		<property name="psCommand" value="cmd /c %s\cprocess /stab " />
 		<property name="executablesLocation" value="K:\deployment\exe" />
-	</bean>
+		</bean>
 	-->
 
-    <util:list id="pageServers">
-        <ref bean="pageServerPB" />
-        <ref bean="pageServerPBC" />
-        <ref bean="pageServerCapula" />
-        <ref bean="pageServer" />
-        <ref bean="pageServerNV" />
-        <ref bean="pageServerEQD" />
-        <ref bean="pageServerEQDRonnie" />
-        <ref bean="pageServerCredit" />
-        <ref bean="pageServerCreditNV" />
-        <ref bean="pageServerIRD" />
-        <ref bean="pageServerCB" />
-        <ref bean="pageServerEB" />
-        <ref bean="loginServer" />
-    </util:list>
-    <util:list id="processingServers">
-        <ref bean="a2jRouter" />
-        <ref bean="dtccCredit" />
-        <ref bean="dtccCreditNV" />
-        <ref bean="dtccEQD" />
-        <ref bean="dtccEQDRonnie" />
-        <ref bean="dtccIRD" />
-        <ref bean="swapswireRates1" />
-        <ref bean="swapswireRates2" />
-        <ref bean="swapswireRates3" />
-        <ref bean="swapswireRatesNV" />
-        <ref bean="swapswirePB" />
-        <ref bean="swapswirePBC" />
-        <ref bean="swapswireCapula" />
-        <ref bean="gdsTradeServer" />
-        <ref bean="gdsTradeServerRates" />
-        <ref bean="swapswireCB" />
-        <ref bean="swapswireEB" />
-        <ref bean="gdsTradeServerCB" />
-    </util:list>
-    <util:list id="ratesOnly">
-        <ref bean="a2jRouter" />
-        <ref bean="swapswireRates1" />
-        <ref bean="pageServer" />
-        <ref bean="loginServer" />
-        <ref bean="gdsTradeServerRates" />
-    </util:list>
-    <util:list id="markitwireOnly">
-        <ref bean="a2jRouter" />
-        <ref bean="swapswireRates1" />
-        <ref bean="swapswirePB" />
-        <ref bean="swapswirePBC" />
-        <ref bean="swapswireCB" />
-        <ref bean="swapswireEB" />
-        <ref bean="gdsTradeServer" />
-        <ref bean="gdsTradeServerRates" />
-        <ref bean="gdsTradeServerCB" />
-        <ref bean="pageServer" />
-        <ref bean="pageServerPB" />
-        <ref bean="pageServerPBC" />
-        <ref bean="pageServerCB" />
-        <ref bean="pageServerEB" />
-        <ref bean="loginServer" />
-    </util:list>
-    <util:list id="ratesNVOnly">
-        <ref bean="a2jRouter" />
-        <ref bean="swapswireRates1" />
-        <ref bean="swapswireRatesNV" />
-        <ref bean="pageServerNV" />
-        <ref bean="pageServer" />
-        <ref bean="loginServer" />
-    </util:list>
-    <util:list id="allServers">
-        <ref bean="a2jRouter" />
-        <ref bean="dtccCredit" />
-        <ref bean="dtccCreditNV" />
-        <ref bean="dtccEQD" />
-        <ref bean="dtccEQDRonnie" />
-        <ref bean="dtccIRD" />
-        <ref bean="pageServerPB" />
-        <ref bean="pageServerPBC" />
-        <ref bean="pageServerCapula" />
-        <ref bean="pageServer" />
-        <ref bean="pageServerNV" />
-        <ref bean="pageServerEQD" />
-        <ref bean="pageServerEQDRonnie" />
-        <ref bean="pageServerCredit" />
-        <ref bean="pageServerCreditNV" />
-        <ref bean="pageServerIRD" />
-        <ref bean="pageServerCB" />
-        <ref bean="pageServerEB" />
-        <ref bean="loginServer" />
-        <ref bean="swapswireRates1" />
-        <ref bean="swapswireRates2" />
-        <ref bean="swapswireRates3" />
-        <ref bean="swapswireRatesNV" />
-        <ref bean="swapswirePB" />
-        <ref bean="swapswirePBC" />
-        <ref bean="swapswireCapula" />
-        <ref bean="swapswireCB" />
-        <ref bean="swapswireEB" />
-        <ref bean="gdsTradeServer" />
-        <ref bean="gdsTradeServerCB" />
-        <ref bean="gdsTradeServerRates" />
-    </util:list>
-
-    <!-- task definitions -->
-    <bean id="dtccCredit" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Credit DTCC" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="1" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-credit-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="credit" />
-    </bean>
-    <bean id="dtccCreditNV" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Credit NV DTCC" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="2" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-credit-nv-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="credit-nv" />
-    </bean>
-    <bean id="dtccEQD" class="org.prototype.web.Process">
-        <property name="windowTitle" value="EQD DTCC" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="3" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-eqd-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="eqd" />
-    </bean>
-    <bean id="dtccIRD" class="org.prototype.web.Process">
-        <property name="windowTitle" value="IRD DTCC" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="4" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-ird-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="ird" />
-    </bean>
-    <bean id="dtccEQDRonnie" class="org.prototype.web.Process">
-        <property name="windowTitle" value="RONNIE EQD DTCC" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="5" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-eqd-ronnie-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="eqd-ronnie" />
-    </bean>
-    <bean id="a2jRouter" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Argon 2 JMS Router" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="11" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-a2j-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="a2j" />
-    </bean>
-    <bean id="swapswireRates1" class="org.prototype.web.Process">
-        <property name="windowTitle" value="1 Rates SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="12" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-rates1-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="rates1" />
-    </bean>
-    <bean id="swapswireRates2" class="org.prototype.web.Process">
-        <property name="windowTitle" value="2 Rates SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="13" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-rates2-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="rates2" />
-    </bean>
-    <bean id="swapswireRates3" class="org.prototype.web.Process">
-        <property name="windowTitle" value="3 Rates SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="14" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-rates3-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="rates3" />
-    </bean>
-    <bean id="swapswireRatesNV" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Rates NV SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="15" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-rates-nv-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="rates-nv" />
-    </bean>
-    <bean id="swapswirePB" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Prime Brokerage SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="16" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-pb-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="pb" />
-    </bean>
-    <bean id="swapswirePBC" class="org.prototype.web.Process">
-        <property name="windowTitle" value="AQR Prime Brokerage SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="17" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-pbc-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="pbc" />
-    </bean>
-    <bean id="swapswireCapula" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Capula Prime Brokerage SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="18" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-pbc-capula-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="pbc-capula" />
-    </bean>
-    <bean id="swapswireCB" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Clearing Broker SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="19" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-cb-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="cb" />
-    </bean>
-    <bean id="swapswireEB" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Execution Bank SwapsWire" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="20" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-eb-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="eb" />
-    </bean>
-    <bean id="gdsTradeServer" class="org.prototype.web.Process">
-        <property name="windowTitle" value="GDS Trade Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="26" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-pb-gds-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="pb-gds" />
-    </bean>
-    <bean id="gdsTradeServerRates" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Rate GDS Trade Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="27" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-rates-gds-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="rates-gds" />
-    </bean>
-    <bean id="gdsTradeServerCB" class="org.prototype.web.Process">
-        <property name="windowTitle" value="CB GDS Trade Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="28" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-cb-gds-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="cb-gds" />
-    </bean>
-    <bean id="loginServer" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Login Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="31" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-dispatcher-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-dispatcher" />
-    </bean>
-    <bean id="pageServerPB" class="org.prototype.web.Process">
-        <property name="windowTitle" value="PB Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="32" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-pb-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-pb" />
-    </bean>
-    <bean id="pageServerPBC" class="org.prototype.web.Process">
-        <property name="windowTitle" value="AQR Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="33" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-pbc-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-pbc" />
-    </bean>
-    <bean id="pageServer" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Rate Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="34" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-rates-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-rates" />
-    </bean>
-    <bean id="pageServerNV" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Rate NV Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="35" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-rates-nv-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-rates-nv" />
-    </bean>
-    <bean id="pageServerEQD" class="org.prototype.web.Process">
-        <property name="windowTitle" value="EQD Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="36" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-eqd-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-eqd" />
-    </bean>
-    <bean id="pageServerCredit" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Credit Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="37" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-credit-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-credit" />
-    </bean>
-    <bean id="pageServerCreditNV" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Credit NV Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="38" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-credit-nv-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-credit-nv" />
-    </bean>
-    <bean id="pageServerIRD" class="org.prototype.web.Process">
-        <property name="windowTitle" value="IRD Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="39" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-ird-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-ird" />
-    </bean>
-    <bean id="pageServerEQDRonnie" class="org.prototype.web.Process">
-        <property name="windowTitle" value="EQD RONNIE Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="40" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-eqd-ronnie-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-eqd-ronnie" />
-    </bean>
-    <bean id="pageServerCapula" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Capula Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="41" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-pbc-capula-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-pbc-capula" />
-    </bean>
-    <bean id="pageServerCB" class="org.prototype.web.Process">
-        <property name="windowTitle" value="CB Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="42" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-cb-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-cb" />
-    </bean>
-    <bean id="pageServerEB" class="org.prototype.web.Process">
-        <property name="windowTitle" value="EB Page Server" />
-        <property name="startCommand" value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-        <property name="startCommandParameters" value="43" />
-        <property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-gui-eb-all.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-eb" />
-    </bean>
-
-
-    <!-- Entries below are just for local testing on london workstations -->
-    <util:list id="localTestingServices">
-        <ref bean="paint" />
-        <ref bean="notepad" />
-        <ref bean="write" />
-        <ref bean="processTest" />
-        <ref bean="processTest2" />
-    </util:list>
-    <!-- task definitions -->
-    <bean id="paint" class="org.prototype.web.Process">
-        <property name="windowTitle" value="untitled - Paint" />
-        <property name="startCommand" value="mspaint.exe" />
-        <property name="workingDirectory" value="c:/temp" />
-        <property name="infoKey" value="mspaint" />
-    </bean>
-    <bean id="notepad" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Untitled - Notepad" />
-        <property name="startCommand" value="notepad.exe" />
-        <property name="workingDirectory" value="c:/temp" />
-        <property name="infoKey" value="notepad" />
-    </bean>
-    <bean id="write" class="org.prototype.web.Process">
-        <property name="windowTitle" value="Document - WordPad" />
-        <property name="startCommand" value="write.exe" />
-        <property name="workingDirectory" value="c:/temp" />
-        <property name="infoKey" value="write" />
-    </bean>
-    <bean id="processTest" class="org.prototype.web.Process">
-        <property name="windowTitle" value="process test" />
-        <property name="startCommand" value="c:/temp/process-test.bat" />
-        <property name="startCommandParameters" value="123" />
-        <property name="workingDirectory" value="c:/temp" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="c:/temp/process-test.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="gui-dispatcher" />
-    </bean>
-    <bean id="processTest2" class="org.prototype.web.Process">
-        <property name="windowTitle" value="process test2" />
-        <property name="startCommand" value="c:/temp/process-test2.bat" />
-        <property name="workingDirectory" value="c:/temp" />
-        <property name="log">
-            <bean class="org.prototype.web.ProcessLog">
-                <property name="pathfilename" value="c:/temp/process-test2.log" />
-                <property name="bytes" value="10000" />
-                <property name="lines" value="100" />
-            </bean>
-        </property>
-        <property name="infoKey" value="test2" />
-    </bean>
-
-    <security:http>
-        <security:intercept-url pattern="/**" access="ROLE_ADMIN" method="POST" />
-        <security:form-login always-use-default-target="true" default-target-url="/login.view?success=true" authentication-failure-url="/login.view?success=false" />
-        <security:logout logout-success-url="/logout_success" logout-url="/process_logout" invalidate-session="true" />
-    </security:http>
-    <security:authentication-provider>
-        <security:user-service>
-            <security:user name="admin" password="prototype" authorities="ROLE_USER, ROLE_ADMIN" />
-            <security:user name="user" password="userpassword" authorities="ROLE_USER" />
-            <security:user name="admin2" password="p" authorities="ROLE_ADMIN" />
-        </security:user-service>
-    </security:authentication-provider>
+	<security:http>
+		<security:intercept-url pattern="/**" access="ROLE_ADMIN"
+			method="POST" />
+		<security:form-login always-use-default-target="true"
+			default-target-url="/login.view?success=true"
+			authentication-failure-url="/login.view?success=false" />
+		<security:logout logout-success-url="/logout_success"
+			logout-url="/process_logout" invalidate-session="true" />
+	</security:http>
+	<security:authentication-manager alias="inMemory">
+		<security:authentication-provider>
+			<security:user-service>
+				<security:user name="admin" password="prototype"
+					authorities="ROLE_USER, ROLE_ADMIN" />
+				<security:user name="user" password="userpassword"
+					authorities="ROLE_USER" />
+				<security:user name="admin2" password="p" authorities="ROLE_ADMIN" />
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
 </beans>

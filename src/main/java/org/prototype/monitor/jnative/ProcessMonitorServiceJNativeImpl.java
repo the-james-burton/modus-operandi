@@ -18,13 +18,11 @@ import org.xvolks.jnative.util.User32;
 import org.xvolks.jnative.util.constants.winuser.WM;
 
 /**
- * Implements the process services via a native proxy layer hooking directly into the User32, Shell32
- * and Kernel32.
+ * Implements the process services via a native proxy layer hooking directly into the User32, Shell32 and Kernel32.
  * 
  * @author Silvio Molinari
  */
 public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorService {
-
     /**
      * Windows API constant to specify that a process/window being started should be shown.
      */
@@ -36,23 +34,20 @@ public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorServ
 
     /**
      * Kills a process with the given id if this id is valid.
-     * @param pid The process to kill
+     * 
+     * @param pid
+     *            The process to kill
      */
     @Override
-    public synchronized void killProcessSpecificImpl(Process process,
-            Window window) throws ProcessMonitorServiceException {
-
-        Thread stopperThread = new Thread(new StopperThread(window),
-                "StopperThread[" + window.getName() + "]");
-        Thread killerThread = new Thread(new KillerThread(process),
-                "KillerThread[" + process.getWindowTitle() + "]");
+    public synchronized void killProcessSpecificImpl(Process process, Window window) throws ProcessMonitorServiceException {
+        Thread stopperThread = new Thread(new StopperThread(window), "StopperThread[" + window.getName() + "]");
+        Thread killerThread = new Thread(new KillerThread(process), "KillerThread[" + process.getWindowTitle() + "]");
         stopperThread.start();
         killerThread.start();
     }
 
     @Override
-    public synchronized void refreshSpecificImpl()
-            throws ProcessMonitorServiceException {
+    public synchronized void refreshSpecificImpl() throws ProcessMonitorServiceException {
         try {
             WindowsEnumerationJNativeCallbackImpl callback = new WindowsEnumerationJNativeCallbackImpl();
             User32.EnumWindows(callback, 0);
@@ -61,7 +56,6 @@ public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorServ
             throw new ProcessMonitorServiceException(e.getMessage(), e);
         }
     }
-
 
     @Override
     public synchronized void startProcessSpecificImpl(Process process) throws ProcessMonitorServiceException {
@@ -74,7 +68,6 @@ public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorServ
                 lpExecInfo.lpParameters = process.getStartCommandParameters();
             }
             lpExecInfo.nShow = SW_SHOW;
-
             boolean worked = Shell32.ShellExecuteEx(lpExecInfo);
             if (worked == false) {
                 throw new ProcessMonitorServiceException("Failed to start process " + process);
@@ -88,20 +81,16 @@ public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorServ
 
     class StopperThread implements Runnable {
         private final Window window;
-        
+
         StopperThread(Window window) {
             this.window = window;
         }
-        
+
         @Override
         public void run() {
             try {
                 getLogger().info("Sending WM_CLOSE to pid " + window.getPid());
-                User32.SendMessage(
-                        new HWND((int) ((JNativeWindow)window).getKey()),
-                        new UINT(WM.WM_CLOSE.getValue()),
-                        new WPARAM(0),
-                        new LPARAM(0));
+                User32.SendMessage(new HWND((int) ((JNativeWindow) window).getKey()), new UINT(WM.WM_CLOSE.getValue()), new WPARAM(0), new LPARAM(0));
             } catch (Exception e) {
                 getLogger().error("Error sending WM_CLOSE to pid " + window.getPid());
             }
@@ -110,13 +99,13 @@ public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorServ
 
     class KillerThread implements Runnable {
         private final Process process;
-        private final long startTime;
-        
+        private final long    startTime;
+
         KillerThread(Process process) {
             this.process = process;
             this.startTime = System.currentTimeMillis();
         }
-        
+
         @Override
         public void run() {
             try {
@@ -124,23 +113,20 @@ public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorServ
                     Thread.sleep(2000L);
                     refresh();
                     if (System.currentTimeMillis() - startTime > 30000L && process.getPid() != 0) {
-                        getLogger().info("Process " + process.getPid() + 
-                                " is not responding in a timely fashon. Forcing shutdown!!");
-                        HANDLE llHandle = Kernel32.OpenProcess(
-                            Kernel32.PROCESS_TERMINATE, false, process.getPid());
+                        getLogger().info("Process " + process.getPid() + " is not responding in a timely fashon. Forcing shutdown!!");
+                        HANDLE llHandle = Kernel32.OpenProcess(Kernel32.PROCESS_TERMINATE, false, process.getPid());
                         if (llHandle != null) {
                             if (Kernel32.TerminateProcess(llHandle, 1)) {
-                                process.stopped();
+                                process.setStopped();
                             }
                         }
                         break;
                     }
                     if (process.getPid() == 0) {
                         getLogger().info("Process has exited within the granted time.");
-                        process.stopped();
+                        process.setStopped();
                         break;
                     }
-                    
                 }
             } catch (Exception e) {
                 getLogger().error("Error sending killing pid " + process.getPid());

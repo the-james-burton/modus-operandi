@@ -1,69 +1,85 @@
-var loginDialog = null;
-
+var loginDialog;
 function __onLogInSuccess() {
-	//$('head').append('<script type="text/javascript" src="js/services.js?.rand=${random}"></script>');
 	window.location=contextDir + '?.rand=' + new Date().getTime();
 	loginDialog.dialog("destroy");
 }
 function __onLogInFailure() {
 	var speed = 200;
-	loginDialog.parents('.ui-dialog:first')
+	$('#logInDialog').parents('.ui-dialog:first')
 		.animate({"left": "+=10px"}, speed)
 		.animate({"left": "-=20px"}, speed)
 		.animate({"left": "+=20px"}, speed)
 		.animate({"left": "-=20px"}, speed)
 		.animate({"left": "+=10px"}, speed);
-	$(__getLoginForm()).find('#j_username').focus();
+	//$('#logInDialog').parents('.ui-dialog:first').effect('shake', {}, speed);
+	//__getLoginFrame().dialog('enable');
+	$('#j_username').focus();
 }
 function __getLoginFrame() {
-	if (document.getElementById('logInDialog').contentDocument) {
-		return document.getElementById('logInDialog');
-	} else {
-		return document.frames['logInDialog'];
+	if ($('#logInDialog').size() == 0) {
+		$('body').append('<div id="logInDialog"><img src="/images/refreshing.gif" alt="loading"/></div>');
 	}
+	return $('#logInDialog');
 }
-
-function __getLoginForm() {
-	var loginFrame = __getLoginFrame();
-	if (loginFrame.contentDocument) {
-		return loginFrame.contentDocument.getElementById('loginForm');
-	} else {
-		return loginFrame.document.getElementById('loginForm');
-	}
+function __onSubmit() {
+	var url= location.protocol+'//'+location.host + '/' + $('#loginForm').attr('action');
+	var method = $('#loginForm').attr('method');
+	var data = {
+		j_username : $('#j_username').val(),
+		j_password : $('#j_password').val()
+	};
+	//$('#logInDialog').dialog('disable');
+	//alert('wait..');
+	$.ajax({
+		type: method,
+		url: url,
+		async : false,
+		cache : false,
+		data: data,
+		success: function(data) {
+			__onLogInSuccess();
+		},
+		error: function(request, error) {
+			__onLogInFailure();
+		}
+	});
 }
 function logInOut() {
 	$(this).addClass('ui-state-active');
 	if (loginDialog == null) {
 		var dialogOptions = {
 			buttons: {
-				"Ok": function() {
+				OK : function() {
 					$('#logInOutButton').removeClass('ui-state-active');
-					__getLoginForm().submit();
+					if ($('#loginForm').size() > 0) {
+						__onSubmit();
+					}
 				},
-				"Cancel" : function() {
+				Cancel : function() {
 					$('#logInOutButton').removeClass('ui-state-active');
-					$(this).dialog("close");
+					loginDialog.dialog('close');
 				}
+			},
+			open : function(event, ui) {
+				var url= location.protocol+'//'+location.host + '/login.view';
+				__getLoginFrame().load(url);
 			},
 			modal: true,
 			resizable: false,
 			bgiframe: true,
+			height: '180',
 			title: 'Please enter your login details'
 		};
-		
-		loginDialog = $('#logInDialog').dialog(dialogOptions);
+		loginDialog = __getLoginFrame().dialog(dialogOptions);
 	} else {
 		loginDialog.dialog('open');
 	}
-	$(__getLoginForm()).find('#j_username').focus();
+
 }
 $(function() {
 	$('#logInOutButton').click(logInOut).hover(function() {
 		$(this).addClass('ui-state-hover');
 	}, function() {
 		$(this).removeClass('ui-state-hover');
-	});
-	$(__getLoginFrame()).load(function() {
-		$(__getLoginForm()).find('#j_username').focus();
 	});
 });

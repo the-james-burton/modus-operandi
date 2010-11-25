@@ -13,8 +13,3 @@ The processes list could not be refreshed.</p>
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Your session has become invalid. Please log in again.</p>
 </div>
 </div>
-<sec:authorize ifNotGranted="ROLE_USER,ROLE_ADMIN">
-    <div style="display: none;">
-    <iframe id="logInDialog" src="login.view" frameborder="0" border="0" cellspacing="0" scrolling="no"></iframe>
-    </div>
-</sec:authorize>

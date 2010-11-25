@@ -6,86 +6,72 @@ import static org.prototype.web.ProcessState.STOPPING;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
-import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.prototype.monitor.dao.ProcessDAO;
 import org.prototype.monitor.jnative.ProcessMonitorServiceJNativeImpl;
 import org.prototype.web.Process;
 import org.prototype.web.ProcessState;
 import org.prototype.web.PropertiesLoader;
 import org.prototype.web.Window;
 
-public abstract class AbstractProcessMonitorService extends TimerTask implements
-        ProcessMonitorService {
-
+public abstract class AbstractProcessMonitorService extends TimerTask implements ProcessMonitorService {
     /**
      * Logger for this class.
      */
-    private static final Log logger = LogFactory.getLog(ProcessMonitorServiceJNativeImpl.class);
-
+    private static final Log     logger                              = LogFactory.getLog(ProcessMonitorServiceJNativeImpl.class);
     /**
      * Time to wait for a process to start up.
      */
-    private static final long DEFAULT_STARTUP_DETECTION_WAIT_TIME = 30000L;
-
+    private static final long    DEFAULT_STARTUP_DETECTION_WAIT_TIME = 30000L;
     /**
      * Time to sleep in between checks.
      */
-    private static final long DEFAULT_STARTUP_DETECTION_INTERVAL = 500L;
-
+    private static final long    DEFAULT_STARTUP_DETECTION_INTERVAL  = 500L;
     /**
-     * The list of processes to be monitored
+     * The DAO providing the list of processes to be monitored
      */
-    private Map<String, Process> processes = new TreeMap<String, Process>();
-
+    private ProcessDAO           processDAO;
     /**
-     * The environment this process is running under (UAT, BAU etc)
+     * The in-memory representation of the processes being monitored.
      */
-    private String environment;
-
+    private Map<String, Process> processes                           = new HashMap<String, Process>();
     /**
      * How often the refresh mechanism should kick in.
      */
-    private int refreshRatio;
-
+    private int                  refreshRatio;
     /**
      * The properties loader used to get properties.
      */
-    private PropertiesLoader propertiesLoader;
-
+    private PropertiesLoader     propertiesLoader;
     /**
      * Information retrieved by the window enumeration process.
      */
-    private Map<String, Window> windows;
-
+    private Map<String, Window>  windows;
     /**
      * Count.
      */
-    int count;
-
+    int                          count;
     /**
      * Configurable time to wait for a process detection at start time.
      */
-    private long startUpDetectionWaitTime = DEFAULT_STARTUP_DETECTION_WAIT_TIME;
-
+    private final long           startUpDetectionWaitTime            = DEFAULT_STARTUP_DETECTION_WAIT_TIME;
     /**
      * Sleep time during checks.
      */
-    private long startUpDetectionInterval = DEFAULT_STARTUP_DETECTION_INTERVAL;
-
+    private final long           startUpDetectionInterval            = DEFAULT_STARTUP_DETECTION_INTERVAL;
     /**
      * This machine's name.
      */
-    private final String machine;
-    
+    private final String         machine;
+
     public AbstractProcessMonitorService() {
         super();
         try {
@@ -100,7 +86,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         boolean found = false;
         for (Window window : windows.values()) {
             if (window.getPid() == pid) {
-                Process process = processes.get(window.getName());
+                Process process = getProcess(window.getName());
                 ProcessState preState = process.getState();
                 if (process != null && !process.isStopping()) {
                     found = true;
@@ -113,11 +99,8 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
                     }
                 }
             }
-
             if (!found) {
-                logger.error("Ignoring request to stop "
-                        + pid
-                        + " because it's either already stopping or not there");
+                logger.error("Ignoring request to stop " + pid + " because it's either already stopping or not there");
             }
         }
     }
@@ -125,13 +108,14 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     protected abstract void killProcessSpecificImpl(Process process, Window window) throws ProcessMonitorServiceException;
 
     @Override
-    public final void refresh() throws ProcessMonitorServiceException {
+    public final synchronized void refresh() throws ProcessMonitorServiceException {
+        setProcesses(processDAO.getAll());
         refreshSpecificImpl();
         Window window = null;
-        for (Process process : processes.values()) {
+        for (Process process : getProcesses()) {
             window = windows.get(process.getWindowTitle());
             if (window == null && !process.isStarting()) {
-                process.stopped();
+                process.setStopped();
             } else if (window != null && !process.isStopping()) {
                 process.setPid(window.getPid());
                 process.setState(RUNNING);
@@ -141,11 +125,25 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         }
     }
 
+    private synchronized void setProcesses(Collection<Process> newProcesses) {
+        Map<String, Process> refreshed = new HashMap<String, Process>();
+        for (Process process : newProcesses) {
+            String key = process.getWindowTitle();
+            if (processes.containsKey(key)) {
+                process.setPid(processes.get(key).getPid());
+                process.setState(processes.get(key).getState());
+                process.setProperties(processes.get(key).getProperties());
+            }
+            refreshed.put(key, process);
+        }
+        processes = refreshed;
+    }
+
     protected abstract void refreshSpecificImpl() throws ProcessMonitorServiceException;
 
     @Override
     public final synchronized void startAllProcesses() throws ProcessMonitorServiceException {
-        for (Process process : processes.values()) {
+        for (Process process : getProcesses()) {
             if (process == null || process.isStarting() || process.isRunning()) {
                 continue;
             }
@@ -153,28 +151,33 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         }
     }
 
-    public final synchronized void startProcess(Process process)
-            throws ProcessMonitorServiceException {
+    public final synchronized void startProcess(Process process) throws ProcessMonitorServiceException {
         logger.info("Starting : " + process);
-
         if (process == null || process.isStarting() || process.isRunning()) {
             logger.info("Ignoring request for start for " + process.getWindowTitle());
             return;
         }
         // flag this
         process.setState(STARTING);
-
         // perform the check in the background as this could take a while!
-        Thread startUpCheckerThread = new Thread(new StartUpThread(process),
-                "StartUpChecker[" + process.getWindowTitle() + "]");
+        Thread startUpCheckerThread = new Thread(new StartUpThread(process), "StartUpChecker[" + process.getWindowTitle() + "]");
         startUpCheckerThread.start();
     }
 
     protected abstract void startProcessSpecificImpl(Process process) throws ProcessMonitorServiceException;
 
+    public synchronized void removeAllProcesses() {
+        processes.clear();
+        processDAO.deleteAll();
+    }
+
+    public synchronized void addAllProcesses(Collection<Process> processes) {
+        processDAO.insertAll(processes);
+    }
+
     @Override
     public final synchronized void startProcess(String windowTitle) throws ProcessMonitorServiceException {
-        startProcess(processes.get(windowTitle));
+        startProcess(getProcess(windowTitle));
     }
 
     @Override
@@ -185,62 +188,17 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     }
 
     @Override
-    public List<Process> getProcesses() {
-        return new ArrayList<Process>(processes.values());
+    public synchronized List<Process> getProcesses() {
+        return processes != null ? new ArrayList<Process>(processes.values()) : new ArrayList<Process>();
     }
 
-    public void setProcesses(List<Process> proc) {
-        for (Process process : proc) {
-            processes.put(process.getWindowTitle(), process);
-        }
-    }
-
-    public void setEnvironmentConfig(Map<String, String> environmentConfig) {
-            String hostname = "test";
-            try {
-                InetAddress addr = InetAddress.getLocalHost();
-                hostname = addr.getHostName().toUpperCase();
-            } catch (UnknownHostException uhe) {
-                logger.error("Could not determine the server's hostname, and could not set the processes list.", uhe);
-            }
-            if (environmentConfig.containsKey(hostname)) {
-                this.environment = environmentConfig.get(hostname);
-            }
-    }
-
-    public void setProcessesConfig(Map<String, List<Process>> processes) {
-            String hostname = null;
-            try {
-                InetAddress addr = InetAddress.getLocalHost();
-                hostname = addr.getHostName().toUpperCase();
-            } catch (UnknownHostException uhe) {
-                logger.error("Could not determine the server's hostname, and could not set the processes list.", uhe);
-            }
-            if (processes.containsKey(hostname)) {
-                List<Process> processList = processes.get(hostname);
-                
-                if (processList != null && processList.size() > 0) {
-                    setProcesses(processList);
-                } else {
-                    logger.warn("No processes for " + hostname + " could be found. Please verify your configuration");
-                }
-            } else {
-                //we could be in testing mode try wild card match
-                Iterator<String> keyIterator = processes.keySet().iterator();
-                String key = null;
-                while (keyIterator.hasNext()) {
-                    key = keyIterator.next();
-                    if (hostname.matches(key)) {
-                        setProcesses(processes.get(key));
-                    }
-                }
-            }
-        
+    public void setProcessDAO(ProcessDAO processDAO) {
+        this.processDAO = processDAO;
     }
 
     @Override
     public String getEnvironment() {
-        return environment;
+        return processDAO.getEnvironmentName();
     }
 
     public void setRefreshRatio(int refreshRatio) {
@@ -256,14 +214,14 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     }
 
     protected synchronized Collection<String> getWindowNames() {
-        return this.processes.keySet();
+        return processes.keySet();
     }
 
     @Override
     public String getMachine() {
         return machine;
     }
-    
+
     @Override
     public Process getProcess(String windowTitle) {
         return processes.get(windowTitle);
@@ -275,7 +233,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
 
     @Override
     public void run() {
-        for (Process process : processes.values()) {
+        for (Process process : getProcesses()) {
             if (process.getLog() != null) {
                 process.getLog().refreshTail();
             }
@@ -284,11 +242,10 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         if (count++ % refreshRatio == 0) {
             refresh();
         }
-        
     }
 
     private class StartUpThread implements Runnable {
-        private Process process;
+        private final Process process;
 
         private StartUpThread(Process process) {
             this.process = process;
@@ -302,13 +259,11 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
                 long startTime = System.currentTimeMillis();
                 startProcessSpecificImpl(process);
                 try {
-                    process.setProperties(propertiesLoader.getProperties(
-                            environment, process.getInfoKey(), true));
+                    process.setProperties(propertiesLoader.getProperties(getEnvironment(), process.getInfoKey(), true));
                 } catch (IOException ioe) {
                     logger.error("Could not load properties.", ioe);
                 }
-                while (process.getPid() == 0
-                        && System.currentTimeMillis() - startTime < startUpDetectionWaitTime) {
+                while (process.getPid() == 0 && System.currentTimeMillis() - startTime < startUpDetectionWaitTime) {
                     try {
                         Thread.sleep(startUpDetectionInterval);
                     } catch (Exception e) {
@@ -320,10 +275,10 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
                     process.setState(RUNNING);
                 } else {
                     // ain't gonna happen??
-                    process.stopped();
+                    process.setStopped();
                 }
             } catch (ProcessMonitorServiceException e) {
-                process.stopped();
+                process.setStopped();
                 throw e;
             }
         }

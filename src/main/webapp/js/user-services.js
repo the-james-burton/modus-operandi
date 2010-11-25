@@ -13,7 +13,7 @@ function __viewLog__error(XMLHttpRequest, textStatus, errorThrown) {
 function __viewLog__open(event, parent_ui, windowTitle) {
 	$.ajax( {
 		'url' : contextDir + 'taillog.view',
-		'type' : 'GET',
+		'type' : 'POST',
 		'data' : ( {
 			'windowTitle' : windowTitle
 		}),
@@ -27,7 +27,7 @@ function __viewLog__open(event, parent_ui, windowTitle) {
 
 function __openLogInNewWindow(windowTitle) {
 	var winOps = 'width=800,height=600,resizable=yes,location=no,directories=no,status=yes,menubar=now,copyhistory=no,scrollbars=yes';
-	window.open(contextDir + 'viewlog.view?windowTitle=' + windowTitle, 'Logs' + windowTitle, winOps);
+	window.open(contextDir + 'viewlog.view?windowTitle=' + encodeURI(windowTitle), 'Logs' + windowTitle, winOps);
 	$('#viewLogDialog').dialog('close');
 }
 
@@ -35,7 +35,6 @@ function __setUpViewLog() {
 	$("div[class*='viewLogButton']").click(
 			function() {
 				var windowTitle = this.id.substring('log_'.length);
-				//window.open('taillog.view?windowTitle=' + windowTitle,'popupName','scrollbars=1,width=800,height=400');
 				if (viewLogRefreshId != null) {
 					clearTimeout(viewLogRefreshId);
 				}
@@ -55,7 +54,6 @@ function __setUpViewLog() {
 					open : function (event, ui) {
 						__viewLog__open(event, parent_ui, windowTitle);
 						viewLogRefreshId = setInterval('__viewLog__open(null, null,\'' + windowTitle + '\')', 10000);
-						$('#viewLogDialog').find('.ui-widget-header').append('Hello world');
 					},
 					close : function (event, ui) {
 						clearInterval(viewLogRefreshId);

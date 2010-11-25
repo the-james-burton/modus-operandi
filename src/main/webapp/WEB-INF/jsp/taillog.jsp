@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>${services.machine}</title>
-    <link type="text/css" href="css/smoothness/jquery-ui-1.7.2.custom.css"
+    <link type="text/css" href="css/smoothness/jquery-ui-1.8.6.custom.css"
     rel="stylesheet" />
 <link type="text/css" href="css/style.css" rel="stylesheet" />
 
@@ -39,11 +39,12 @@
     }
     
     </style>
-    <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.6.custom.min.js"></script>
 	<script>
 	var viewLogRefreshId = null;
 	var contextDir = '/';
+	var windowTitle = '';
 	
 	function __viewLog__success(data, textStatus) {
 	    $('#logContents').empty().append(data);
@@ -61,11 +62,11 @@
 	    __hideRefresh();
 	}
 
-	function __viewLog__open(event, parent_ui, windowTitle) {
+	function __viewLog__open(event, parent_ui) {
 	      __showRefresh();
 	    $.ajax( {
 	        'url' : contextDir + 'taillog.view',
-	        'type' : 'GET',
+	        'type' : 'POST',
 	        'data' : ( {
 	            'windowTitle' : windowTitle
 	        }),
@@ -76,14 +77,14 @@
 	    });
 	}
 
-	function __viewLogRange__open(event, parent_ui, windowTitle, startLine, endLine) {
+	function __viewLogRange__open(event, parent_ui, startLine, endLine) {
 	          __showRefresh();
 	          if (viewLogRefreshId != null) {
 		          clearInterval(viewLogRefreshId);
 	          }
 	        $.ajax( {
 	            'url' : contextDir + 'viewlogrange.view',
-	            'type' : 'GET',
+	            'type' : 'POST',
 	            'data' : ( {
 	                'windowTitle' : windowTitle,
 	                'startLine' : startLine,
@@ -95,14 +96,14 @@
 	            'ui' : parent_ui
 	        });
 	    }
-    function __viewLogTail__open(event, parent_ui, windowTitle, lastLines) {
+    function __viewLogTail__open(event, parent_ui, lastLines) {
         __showRefresh();
         if (viewLogRefreshId != null) {
             clearInterval(viewLogRefreshId);
         }
       $.ajax( {
           'url' : contextDir + 'viewlogtail.view',
-          'type' : 'GET',
+          'type' : 'POST',
           'data' : ( {
               'windowTitle' : windowTitle,
               'lastLines' : lastLines
@@ -113,14 +114,14 @@
           'ui' : parent_ui
       });
   }
-    function __viewLogFilter__open(event, parent_ui, windowTitle, filter) {
+    function __viewLogFilter__open(event, parent_ui, filter) {
         __showRefresh();
         if (viewLogRefreshId != null) {
             clearInterval(viewLogRefreshId);
         }
       $.ajax( {
           'url' : contextDir + 'viewlogfilter.view',
-          'type' : 'GET',
+          'type' : 'POST',
           'data' : ( {
               'windowTitle' : windowTitle,
               'filter' : filter
@@ -145,9 +146,9 @@
 	}
 
 	$(function() {
-		var windowTitle = getUrlVars()['windowTitle'];
-		__viewLog__open(null, $('#logContents')[0], windowTitle);
-        viewLogRefreshId = setInterval('__viewLog__open(null, null,\'' + windowTitle + '\')', 10000);
+		windowTitle = decodeURI(getUrlVars()['windowTitle']);
+		__viewLog__open(null, $('#logContents')[0]);
+        viewLogRefreshId = setInterval('__viewLog__open(null, null)', 10000);
 
         $('#submit').click(function() {
             var start = $('#startLine').removeClass('ui-state-error');
@@ -161,21 +162,21 @@
 	                start.addClass('ui-state-error');
 	                end.addClass('ui-state-error');
 	            } else {
-	            	__viewLogRange__open(null, start[0], windowTitle, start.val(), end.val());
+	            	__viewLogRange__open(null, start[0], start.val(), end.val());
 	            }
             } else if ($('li label[for=filter]').hasClass('ui-state-search-active')) {
                 filter.focus();
                 if (filter.val() == '') {
                     filter.addClass('ui-state-error');
                 } else {
-                    __viewLogFilter__open(null, filter[0], windowTitle, filter.val());
+                    __viewLogFilter__open(null, filter[0], filter.val());
                 }
             } else {
                 tail.focus();
                 if (tail.val() == '') {
                     tail.addClass('ui-state-error');
                 } else {
-                    __viewLogTail__open(null, tail[0], windowTitle, tail.val());
+                    __viewLogTail__open(null, tail[0], tail.val());
                 }
             }
         });
