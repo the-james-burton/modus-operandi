@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<util:list id="bulkUpdate">
+		<ref bean="paint" />
+		<ref bean="notepad" />
+		<ref bean="write" />
+		<ref bean="processTest" />
+		<ref bean="processTest2" />
+	</util:list>
+	<!-- task definitions -->
+	<bean id="paint" class="org.prototype.web.Process">
+		<property name="windowTitle" value="untitled - Paint" />
+		<property name="startCommand" value="mspaint.exe" />
+		<property name="workingDirectory" value="c:/temp" />
+		<property name="infoKey" value="mspaint" />
+	</bean>
+	<bean id="notepad" class="org.prototype.web.Process">
+		<property name="windowTitle" value="Untitled - Notepad" />
+		<property name="startCommand" value="notepad.exe" />
+		<property name="workingDirectory" value="c:/temp" />
+		<property name="infoKey" value="notepad" />
+	</bean>
+	<bean id="write" class="org.prototype.web.Process">
+		<property name="windowTitle" value="Document - WordPad" />
+		<property name="startCommand" value="write.exe" />
+		<property name="workingDirectory" value="c:/temp" />
+		<property name="infoKey" value="write" />
+	</bean>
+	<bean id="processTest" class="org.prototype.web.Process">
+		<property name="windowTitle" value="process test" />
+		<property name="startCommand" value="c:/temp/process-test.bat" />
+		<property name="startCommandParameters" value="123" />
+		<property name="workingDirectory" value="c:/temp" />
+		<property name="log">
+			<bean class="org.prototype.web.ProcessLog">
+				<property name="pathfilename" value="c:/temp/process-test.log" />
+				<property name="bytes" value="10000" />
+				<property name="lines" value="100" />
+			</bean>
+		</property>
+		<property name="infoKey" value="gui-dispatcher" />
+	</bean>
+	<bean id="processTest2" class="org.prototype.web.Process">
+		<property name="windowTitle" value="process test2" />
+		<property name="startCommand" value="c:/temp/process-test2.bat" />
+		<property name="workingDirectory" value="c:/temp" />
+		<property name="log">
+			<bean class="org.prototype.web.ProcessLog">
+				<property name="pathfilename" value="c:/temp/process-test2.log" />
+				<property name="bytes" value="10000" />
+				<property name="lines" value="100" />
+			</bean>
+		</property>
+		<property name="infoKey" value="test2" />
+	</bean>
+</beans>

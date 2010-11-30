@@ -1,24 +1,24 @@
 function __startAll__success(data, textStatus) {
 	$('#startAllButton').removeClass('ui-state-active');
-	$('#resultsTableContainer').empty().append($("#resultsTable", data));
+	$('#serviceDetails').html(data);
 	__runAllRefreshSuccessHandlers();
 }
 
 function __startAll__error(data, textStatus) {
 	$('#startAllButton').addClass('ui-state-error');
-	$('#resultsTableContainer').empty().append(errorMarkup);
+	$('#serviceDetails').html(errorMarkup);
 	__hideRefresh();
 }
 
 function __stopAll__success(data, textStatus) {
 	$('#stopAllButton').removeClass('ui-state-active');
-	$('#resultsTableContainer').empty().append($("#resultsTable", data));
+	$('#serviceDetails').html(data);
 	__runAllRefreshSuccessHandlers();
 }
 
 function __stopAll__error(data, textStatus) {
 	$('#stopAllButton').addClass('ui-state-error');
-	$('#resultsTableContainer').empty().append(errorMarkup);
+	$('#serviceDetails').html(errorMarkup);
 	__hideRefresh();
 }
 
@@ -34,7 +34,8 @@ function startAll() {
 		type : 'POST',
 		data : ( {
 			pid : -2,
-			startAll : true
+			startAll : true,
+			ajax : true
 		}),
 		cache : false,
 		success : __startAll__success,
@@ -43,14 +44,17 @@ function startAll() {
 	__showRefresh();
 }
 
-function stopAll() {
+function stopAll(event) {
+	event.preventDefault();
+	event.stopPropagation();
 	$('#stopAllButton').addClass('ui-state-active').removeClass('ui-state-error');
 	$.ajax( {
 		url : contextDir,
 		type : 'POST',
 		data : ( {
 			pid : -2,
-			stopAll : true
+			stopAll : true,
+			ajax : true
 		}),
 		cache : false,
 		success : __stopAll__success,
@@ -75,7 +79,8 @@ function configure(event) {
 						url : url,
 						type : 'POST',
 						data : ( {
-							fileName : fileLocation
+							fileName : fileLocation,
+							ajax : true
 						}),
 						cache : false,
 						success : function (data, textStatus, XMLHttpRequest) {
@@ -127,13 +132,14 @@ function __setUpStop() {
 			'url' : contextDir,
 			'type' : 'POST',
 			'data' : ( {
-				'pid' : this.id.substring('pid_'.length),
-				'windowTitle' : ''
+				pid : this.id.substring('pid_'.length),
+				windowTitle : '',
+				ajax : true
 			}),
-			'cache' : false,
-			'success' : __refresh__success,
-			'error' : __generic__error,
-			'ui' : this
+			cache : false,
+			success : __refresh__success,
+			error : __generic__error,
+			ui : this
 		});
 		__showRefresh();
 	}).hover(function() {
@@ -151,16 +157,17 @@ function __setUpStart() {
 				$(this).addClass('ui-state-active').addClass('ui-state-highlight').removeClass(
 						'ui-state-error');
 				$.ajax( {
-					'url' : contextDir,
-					'type' : 'POST',
-					'data' : ( {
-						'pid' : 0,
-						'windowTitle' : this.id
+					url : contextDir,
+					type : 'POST',
+					data : ( {
+						pid : 0,
+						windowTitle : this.id,
+						ajax : true
 					}),
-					'cache' : false,
-					'success' : __refresh__success,
-					'error' : __generic__error,
-					'ui' : this
+					cache : false,
+					success : __refresh__success,
+					error : __generic__error,
+					ui : this
 				});
 				__showRefresh();
 			}).hover(function() {
@@ -180,7 +187,8 @@ function __viewInfo__open(event, ui, windowTitle) {
 		url : contextDir + 'viewinfo.view',
 		type : 'POST',
 		data : {
-			'windowTitle' : windowTitle
+			windowTitle : windowTitle,
+			ajax : true
 		},
 		cache : false,
 		success : __viewInfo__success,

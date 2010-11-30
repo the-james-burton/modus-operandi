@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.prototype.monitor.dao.ProcessDAO;
 import org.prototype.monitor.jnative.ProcessMonitorServiceJNativeImpl;
 import org.prototype.web.Process;
+import org.prototype.web.ProcessLog;
 import org.prototype.web.ProcessState;
 import org.prototype.web.PropertiesLoader;
 import org.prototype.web.Window;
@@ -82,16 +83,18 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     }
 
     @Override
-    public final void killProcess(int pid) throws ProcessMonitorServiceException {
+    public synchronized final void killProcess(int pid) throws ProcessMonitorServiceException {
         boolean found = false;
+        boolean killRequested = false;
         for (Window window : windows.values()) {
             if (window.getPid() == pid) {
                 Process process = getProcess(window.getName());
                 ProcessState preState = process.getState();
-                if (process != null && !process.isStopping()) {
-                    found = true;
+                found = process != null;
+                if (found && !process.isStopping()) {
                     process.setState(STOPPING);
                     try {
+                        killRequested = true;
                         killProcessSpecificImpl(process, window);
                     } catch (ProcessMonitorServiceException e) {
                         process.setState(preState);
@@ -100,7 +103,9 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
                 }
             }
             if (!found) {
-                logger.error("Ignoring request to stop " + pid + " because it's either already stopping or not there");
+                logger.error("Ignoring request to stop " + pid + " because it cannot be found.");
+            } else if (!killRequested) {
+                logger.error("Ignoring request to stop " + pid + " it's already stopping.");
             }
         }
     }
@@ -130,11 +135,31 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         for (Process process : newProcesses) {
             String key = process.getWindowTitle();
             if (processes.containsKey(key)) {
-                process.setPid(processes.get(key).getPid());
-                process.setState(processes.get(key).getState());
-                process.setProperties(processes.get(key).getProperties());
+                // Keep old reference but change any serialisable values as they might have changed
+                Process oldP = processes.get(key);
+                oldP.setId(process.getId());
+                oldP.setInfoKey(process.getInfoKey());
+                oldP.setStartCommand(process.getStartCommand());
+                oldP.setStartCommandParameters(process.getStartCommandParameters());
+                oldP.setWorkingDirectory(process.getWorkingDirectory());
+                // same for the log
+                ProcessLog oldLog = oldP.getLog();
+                ProcessLog newLog = process.getLog();
+                if (oldLog == null && newLog != null) {
+                    oldLog = newLog;
+                } else if (oldLog != null && newLog == null) {
+                    oldLog = newLog;
+                } else if (oldLog != null && newLog != null) {
+                    oldLog.setId(newLog.getId());
+                    oldLog.setPathfilename(newLog.getPathfilename());
+                    oldLog.setBytes(newLog.getBytes());
+                    oldLog.setLines(newLog.getLines());
+                }
+                oldP.setLog(oldLog);
+                refreshed.put(key, oldP);
+            } else {
+                refreshed.put(key, process);
             }
-            refreshed.put(key, process);
         }
         processes = refreshed;
     }
@@ -182,6 +207,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
 
     @Override
     public final synchronized void stopAllProcesses() {
+        logger.info(String.format("Stopping all processes: %d", windows.size()));
         for (Window window : windows.values()) {
             killProcess(window.getPid());
         }

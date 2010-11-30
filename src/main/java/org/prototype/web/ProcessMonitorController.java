@@ -68,6 +68,7 @@ public class ProcessMonitorController {
         if (pid == -1) {
             services.refresh();
         } else if (pid > 0) {
+            log.info(String.format("Received request to kill process %d.", pid));
             services.killProcess(pid);
         } else if (windowTitle != null) {
             services.startProcess(windowTitle);
