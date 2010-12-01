@@ -11,8 +11,6 @@ public interface ProcessDAO {
 
     Collection<String> getWindowNames();
 
-    String getEnvironmentName();
-
     void insert(Process process);
 
     void update(Process process);

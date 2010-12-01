@@ -175,6 +175,22 @@ public class ProcessMonitorController {
             }
             FileSystemResource lFileSystemResource = new FileSystemResource(configFile);
             BeanFactory factory = new XmlBeanFactory(lFileSystemResource);
+            Object props = factory.getBean("properties");
+            if (props != null) {
+                if (!(props instanceof Collection<?>)) {
+                    throw new IllegalArgumentException("properties bean defined in the config file isn't a Collection");
+                }
+                Collection<ConfigEntry> configs = new ArrayList<ConfigEntry>();
+                Collection<?> configData = (Collection<?>) props;
+                for (Object obj : configData) {
+                    if (obj instanceof ConfigEntry) {
+                        configs.add((ConfigEntry) obj);
+                    }
+                }
+                log.info(String.format("Loaded %d ConfigEntry objects from %s.", configs.size(), fileName));
+                services.removeAllConfigEntries();
+                services.addAllConfigEntries(configs);
+            }
             Object object = factory.getBean("bulkUpdate");
             if (object == null) {
                 throw new IllegalArgumentException("Config file doesn't define the expected bulkUpdate list");

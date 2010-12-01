@@ -50,6 +50,7 @@
 		<property name="refreshRatio" value="10" />
 		<property name="propertiesLoader" ref="propertiesLoader" />
 		<property name="processDAO" ref="processDAO"/>
+		<property name="configDAO" ref="configDAO"/>
 	</bean>
 
 	<bean id="services" class="org.prototype.monitor.jna.ProcessMonitorServiceJnaImpl" parent="abstractServices" />

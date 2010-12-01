@@ -19,16 +19,11 @@ public class HSQLProcessDAOImpl extends HibernateDaoSupport implements ProcessDA
         return results == null ? new ArrayList<Process>() : results;
     }
 
-    @Override
-    public String getEnvironmentName() {
-        return "UNKNOWN";
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public Process getProcess(String windowTitle) {
         List<Process> result = getHibernateTemplate().findByNamedParam("select p from Process p where p.windowTitle=:windowTitle", "windowTitle", windowTitle);
-        return result.iterator().next();
+        return result.iterator().hasNext() ? result.iterator().next() : null;
     }
 
     @SuppressWarnings("unchecked")

@@ -15,8 +15,11 @@ import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.prototype.monitor.dao.ConfigEntryDAO;
 import org.prototype.monitor.dao.ProcessDAO;
 import org.prototype.monitor.jnative.ProcessMonitorServiceJNativeImpl;
+import org.prototype.web.ConfigEntry;
+import org.prototype.web.ConfigKey;
 import org.prototype.web.Process;
 import org.prototype.web.ProcessLog;
 import org.prototype.web.ProcessState;
@@ -37,9 +40,13 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
      */
     private static final long    DEFAULT_STARTUP_DETECTION_INTERVAL  = 500L;
     /**
-     * The DAO providing the list of processes to be monitored
+     * The DAO providing the list of processes to be monitored.
      */
     private ProcessDAO           processDAO;
+    /**
+     * The DAO providing access to properties.
+     */
+    private ConfigEntryDAO       configDAO;
     /**
      * The in-memory representation of the processes being monitored.
      */
@@ -202,6 +209,16 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     }
 
     @Override
+    public void removeAllConfigEntries() {
+        configDAO.deleteAll();
+    }
+
+    @Override
+    public void addAllConfigEntries(Collection<ConfigEntry> configEntries) {
+        configDAO.insertAll(configEntries);
+    }
+
+    @Override
     public final synchronized void startProcess(String windowTitle) throws ProcessMonitorServiceException {
         startProcess(getProcess(windowTitle));
     }
@@ -223,9 +240,14 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         this.processDAO = processDAO;
     }
 
+    public void setConfigDAO(ConfigEntryDAO configDAO) {
+        this.configDAO = configDAO;
+    }
+
     @Override
     public String getEnvironment() {
-        return processDAO.getEnvironmentName();
+        ConfigEntry envName = configDAO.getConfigEntry(ConfigKey.ENVIRONMENT_NAME);
+        return envName == null || envName.getValue() == null ? "UNKNOWN" : envName.getValue();
     }
 
     public void setRefreshRatio(int refreshRatio) {

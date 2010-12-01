@@ -5,6 +5,13 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+	<util:list id="properties">
+		<bean class="org.prototype.web.ConfigEntry">
+			<property name="value" value="LOCAL"/>
+			<property name="key" value="ENVIRONMENT_NAME"/>
+		</bean>
+	</util:list>
+
 	<util:list id="bulkUpdate">
 		<ref bean="paint" />
 		<ref bean="notepad" />
