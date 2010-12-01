@@ -86,6 +86,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     public synchronized final void killProcess(int pid) throws ProcessMonitorServiceException {
         boolean found = false;
         boolean killRequested = false;
+        logger.info(String.format("Trying to stop pid %d", pid));
         for (Window window : windows.values()) {
             if (window.getPid() == pid) {
                 Process process = getProcess(window.getName());
@@ -102,11 +103,11 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
                     }
                 }
             }
-            if (!found) {
-                logger.error("Ignoring request to stop " + pid + " because it cannot be found.");
-            } else if (!killRequested) {
-                logger.error("Ignoring request to stop " + pid + " it's already stopping.");
-            }
+        }
+        if (!found) {
+            logger.error("Ignoring request to stop " + pid + " because it cannot be found.");
+        } else if (!killRequested) {
+            logger.error("Ignoring request to stop " + pid + " it's already stopping.");
         }
     }
 
