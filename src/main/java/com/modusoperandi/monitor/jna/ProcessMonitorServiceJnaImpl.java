@@ -1,12 +1,12 @@
 package com.modusoperandi.monitor.jna;
 
 
+import com.modusoperandi.model.Process;
+import com.modusoperandi.model.ProcessState;
+import com.modusoperandi.model.Window;
 import com.modusoperandi.monitor.AbstractProcessMonitorService;
 import com.modusoperandi.monitor.ProcessMonitorServiceException;
 import com.modusoperandi.monitor.jna.WindowsEnumerationJnaCallbackImpl.JnaWindow;
-import com.modusoperandi.web.Process;
-import com.modusoperandi.web.ProcessState;
-import com.modusoperandi.web.Window;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT.HANDLE;

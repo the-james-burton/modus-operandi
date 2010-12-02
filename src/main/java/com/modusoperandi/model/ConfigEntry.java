@@ -1,4 +1,4 @@
-package com.modusoperandi.web;
+package com.modusoperandi.model;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;

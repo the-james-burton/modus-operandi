@@ -27,8 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.modusoperandi.model.ConfigEntry;
+import com.modusoperandi.model.Process;
+import com.modusoperandi.model.ProcessLog.Line;
 import com.modusoperandi.monitor.ProcessMonitorService;
-import com.modusoperandi.web.ProcessLog.Line;
 
 @Controller
 public class ProcessMonitorController {

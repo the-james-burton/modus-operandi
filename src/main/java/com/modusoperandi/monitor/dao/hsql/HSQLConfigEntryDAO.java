@@ -8,10 +8,10 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.modusoperandi.model.ConfigEntry;
+import com.modusoperandi.model.ConfigKey;
+import com.modusoperandi.model.Process;
 import com.modusoperandi.monitor.dao.ConfigEntryDAO;
-import com.modusoperandi.web.ConfigEntry;
-import com.modusoperandi.web.ConfigKey;
-import com.modusoperandi.web.Process;
 
 @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class HSQLConfigEntryDAO extends HibernateDaoSupport implements ConfigEntryDAO {

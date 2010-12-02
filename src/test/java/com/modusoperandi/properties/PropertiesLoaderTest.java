@@ -7,7 +7,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.modusoperandi.web.PropertiesLoader;
+import com.modusoperandi.monitor.PropertiesLoader;
 
 public class PropertiesLoaderTest {
     PropertiesLoader propertiesLoader;

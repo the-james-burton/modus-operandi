@@ -39,7 +39,7 @@
 		</property>
 	</bean>
 
-	<bean id="propertiesLoader" class="com.modusoperandi.web.PropertiesLoader">
+	<bean id="propertiesLoader" class="com.modusoperandi.monitor.PropertiesLoader">
 		<property name="fileExtension" value="txt" />
 		<property name="configEntryDAO" ref="configDAO" />
 	</bean>

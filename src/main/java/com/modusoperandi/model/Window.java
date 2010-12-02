@@ -1,4 +1,4 @@
-package com.modusoperandi.web;
+package com.modusoperandi.model;
 
 public class Window {
     private int pid;

@@ -8,8 +8,8 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.modusoperandi.model.Process;
 import com.modusoperandi.monitor.dao.ProcessDAO;
-import com.modusoperandi.web.Process;
 
 @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class HSQLProcessDAOImpl extends HibernateDaoSupport implements ProcessDAO {

@@ -12,8 +12,8 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.modusoperandi.model.Process;
 import com.modusoperandi.monitor.dao.ProcessDAO;
-import com.modusoperandi.web.Process;
 
 public class StaticProcessDAOImpl implements ProcessDAO {
     private static final Log           logger    = LogFactory.getLog(StaticProcessDAOImpl.class);

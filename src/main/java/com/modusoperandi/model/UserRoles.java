@@ -1,4 +1,4 @@
-package com.modusoperandi.monitor;
+package com.modusoperandi.model;
 
 public class UserRoles {
     public static final String ADMIN = "ROLE_ADMIN";

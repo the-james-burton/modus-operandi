@@ -12,11 +12,11 @@ import org.xvolks.jnative.util.Shell32;
 import org.xvolks.jnative.util.User32;
 import org.xvolks.jnative.util.constants.winuser.WM;
 
+import com.modusoperandi.model.Process;
+import com.modusoperandi.model.Window;
 import com.modusoperandi.monitor.AbstractProcessMonitorService;
 import com.modusoperandi.monitor.ProcessMonitorServiceException;
 import com.modusoperandi.monitor.jnative.WindowsEnumerationJNativeCallbackImpl.JNativeWindow;
-import com.modusoperandi.web.Process;
-import com.modusoperandi.web.Window;
 
 /**
  * Implements the process services via a native proxy layer hooking directly into the User32, Shell32 and Kernel32.

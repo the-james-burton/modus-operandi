@@ -1,8 +1,8 @@
 package com.modusoperandi.monitor;
 
-import static com.modusoperandi.web.ProcessState.RUNNING;
-import static com.modusoperandi.web.ProcessState.STARTING;
-import static com.modusoperandi.web.ProcessState.STOPPING;
+import static com.modusoperandi.model.ProcessState.RUNNING;
+import static com.modusoperandi.model.ProcessState.STARTING;
+import static com.modusoperandi.model.ProcessState.STOPPING;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -16,16 +16,15 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.modusoperandi.model.ConfigEntry;
+import com.modusoperandi.model.ConfigKey;
+import com.modusoperandi.model.Process;
+import com.modusoperandi.model.ProcessLog;
+import com.modusoperandi.model.ProcessState;
+import com.modusoperandi.model.Window;
 import com.modusoperandi.monitor.dao.ConfigEntryDAO;
 import com.modusoperandi.monitor.dao.ProcessDAO;
 import com.modusoperandi.monitor.jnative.ProcessMonitorServiceJNativeImpl;
-import com.modusoperandi.web.ConfigEntry;
-import com.modusoperandi.web.ConfigKey;
-import com.modusoperandi.web.Process;
-import com.modusoperandi.web.ProcessLog;
-import com.modusoperandi.web.ProcessState;
-import com.modusoperandi.web.PropertiesLoader;
-import com.modusoperandi.web.Window;
 
 public abstract class AbstractProcessMonitorService extends TimerTask implements ProcessMonitorService {
     /**

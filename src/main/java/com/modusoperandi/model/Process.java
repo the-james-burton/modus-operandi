@@ -1,4 +1,4 @@
-package com.modusoperandi.web;
+package com.modusoperandi.model;
 
 import java.util.Map;
 

@@ -8,7 +8,7 @@
 	<import resource="shared-definitions.xml"/>
 
 	<util:list id="properties">
-		<bean class="com.modusoperandi.web.ConfigEntry">
+		<bean class="com.modusoperandi.model.ConfigEntry">
 			<property name="value" value="UAT2"/>
 			<property name="key" value="ENVIRONMENT_NAME"/>
 		</bean>

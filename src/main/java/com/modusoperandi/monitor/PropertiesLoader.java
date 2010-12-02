@@ -1,4 +1,4 @@
-package com.modusoperandi.web;
+package com.modusoperandi.monitor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,8 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.modusoperandi.model.ConfigEntry;
+import com.modusoperandi.model.ConfigKey;
 import com.modusoperandi.monitor.dao.ConfigEntryDAO;
 
 /**

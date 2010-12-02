@@ -5,8 +5,9 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
-import com.modusoperandi.web.ConfigEntry;
-import com.modusoperandi.web.Process;
+import com.modusoperandi.model.ConfigEntry;
+import com.modusoperandi.model.Process;
+import com.modusoperandi.model.UserRoles;
 
 /**
  * Defines the operations required by the process monitor. It also specifies the security settings to be applied. The methods {@link #refresh()},

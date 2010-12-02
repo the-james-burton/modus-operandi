@@ -5,20 +5,20 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 	
-	<bean id="propertiesLoaderInputDir" class="com.modusoperandi.web.ConfigEntry">
+	<bean id="propertiesLoaderInputDir" class="com.modusoperandi.model.ConfigEntry">
 		<property name="value" value="\\lonms03418\cruise\builds\analysis.finesse\reports\config\properties"/>
 		<property name="key" value="PROPERTIES_LOADER_INPUT_DIR"/>
 	</bean>
 	
 	<!-- task definitions -->
-	<bean id="dtccCredit" class="com.modusoperandi.web.Process">
+	<bean id="dtccCredit" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Credit DTCC" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="1" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-credit-all.log" />
 				<property name="bytes" value="10000" />
@@ -27,14 +27,14 @@
 		</property>
 		<property name="infoKey" value="credit" />
 	</bean>
-	<bean id="dtccCreditNV" class="com.modusoperandi.web.Process">
+	<bean id="dtccCreditNV" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Credit NV DTCC" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="2" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-credit-nv-all.log" />
 				<property name="bytes" value="10000" />
@@ -43,14 +43,14 @@
 		</property>
 		<property name="infoKey" value="credit-nv" />
 	</bean>
-	<bean id="dtccEQD" class="com.modusoperandi.web.Process">
+	<bean id="dtccEQD" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="EQD DTCC" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="3" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-eqd-all.log" />
 				<property name="bytes" value="10000" />
 				<property name="lines" value="100" />
@@ -58,14 +58,14 @@
 		</property>
 		<property name="infoKey" value="eqd" />
 	</bean>
-	<bean id="dtccIRD" class="com.modusoperandi.web.Process">
+	<bean id="dtccIRD" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="IRD DTCC" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="4" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-ird-all.log" />
 				<property name="bytes" value="10000" />
 				<property name="lines" value="100" />
@@ -73,14 +73,14 @@
 		</property>
 		<property name="infoKey" value="ird" />
 	</bean>
-	<bean id="dtccEQDRonnie" class="com.modusoperandi.web.Process">
+	<bean id="dtccEQDRonnie" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="RONNIE EQD DTCC" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="5" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-eqd-ronnie-all.log" />
 				<property name="bytes" value="10000" />
@@ -89,14 +89,14 @@
 		</property>
 		<property name="infoKey" value="eqd-ronnie" />
 	</bean>
-	<bean id="a2jRouter" class="com.modusoperandi.web.Process">
+	<bean id="a2jRouter" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Argon 2 JMS Router" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="11" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-a2j-all.log" />
 				<property name="bytes" value="10000" />
 				<property name="lines" value="100" />
@@ -104,14 +104,14 @@
 		</property>
 		<property name="infoKey" value="a2j" />
 	</bean>
-	<bean id="swapswireRates1" class="com.modusoperandi.web.Process">
+	<bean id="swapswireRates1" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="1 Rates SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="12" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-rates1-all.log" />
 				<property name="bytes" value="10000" />
@@ -120,14 +120,14 @@
 		</property>
 		<property name="infoKey" value="rates1" />
 	</bean>
-	<bean id="swapswireRates2" class="com.modusoperandi.web.Process">
+	<bean id="swapswireRates2" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="2 Rates SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="13" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-rates2-all.log" />
 				<property name="bytes" value="10000" />
@@ -136,14 +136,14 @@
 		</property>
 		<property name="infoKey" value="rates2" />
 	</bean>
-	<bean id="swapswireRates3" class="com.modusoperandi.web.Process">
+	<bean id="swapswireRates3" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="3 Rates SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="14" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-rates3-all.log" />
 				<property name="bytes" value="10000" />
@@ -152,14 +152,14 @@
 		</property>
 		<property name="infoKey" value="rates3" />
 	</bean>
-	<bean id="swapswireRatesNV" class="com.modusoperandi.web.Process">
+	<bean id="swapswireRatesNV" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Rates NV SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="15" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-rates-nv-all.log" />
 				<property name="bytes" value="10000" />
@@ -168,14 +168,14 @@
 		</property>
 		<property name="infoKey" value="rates-nv" />
 	</bean>
-	<bean id="swapswirePB" class="com.modusoperandi.web.Process">
+	<bean id="swapswirePB" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Prime Brokerage SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="16" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-pb-all.log" />
 				<property name="bytes" value="10000" />
 				<property name="lines" value="100" />
@@ -183,14 +183,14 @@
 		</property>
 		<property name="infoKey" value="pb" />
 	</bean>
-	<bean id="swapswirePBC" class="com.modusoperandi.web.Process">
+	<bean id="swapswirePBC" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="AQR Prime Brokerage SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="17" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-pbc-all.log" />
 				<property name="bytes" value="10000" />
 				<property name="lines" value="100" />
@@ -198,14 +198,14 @@
 		</property>
 		<property name="infoKey" value="pbc" />
 	</bean>
-	<bean id="swapswireCapula" class="com.modusoperandi.web.Process">
+	<bean id="swapswireCapula" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Capula Prime Brokerage SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="18" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-pbc-capula-all.log" />
 				<property name="bytes" value="10000" />
@@ -214,14 +214,14 @@
 		</property>
 		<property name="infoKey" value="pbc-capula" />
 	</bean>
-	<bean id="swapswireCB" class="com.modusoperandi.web.Process">
+	<bean id="swapswireCB" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Clearing Broker SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="19" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-cb-all.log" />
 				<property name="bytes" value="10000" />
 				<property name="lines" value="100" />
@@ -229,14 +229,14 @@
 		</property>
 		<property name="infoKey" value="cb" />
 	</bean>
-	<bean id="swapswireEB" class="com.modusoperandi.web.Process">
+	<bean id="swapswireEB" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Execution Bank SwapsWire" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="20" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-eb-all.log" />
 				<property name="bytes" value="10000" />
 				<property name="lines" value="100" />
@@ -244,14 +244,14 @@
 		</property>
 		<property name="infoKey" value="eb" />
 	</bean>
-	<bean id="gdsTradeServer" class="com.modusoperandi.web.Process">
+	<bean id="gdsTradeServer" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="GDS Trade Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="26" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-pb-gds-all.log" />
 				<property name="bytes" value="10000" />
@@ -260,14 +260,14 @@
 		</property>
 		<property name="infoKey" value="pb-gds" />
 	</bean>
-	<bean id="gdsTradeServerRates" class="com.modusoperandi.web.Process">
+	<bean id="gdsTradeServerRates" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Rate GDS Trade Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="27" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-rates-gds-all.log" />
 				<property name="bytes" value="10000" />
@@ -276,14 +276,14 @@
 		</property>
 		<property name="infoKey" value="rates-gds" />
 	</bean>
-	<bean id="gdsTradeServerCB" class="com.modusoperandi.web.Process">
+	<bean id="gdsTradeServerCB" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="CB GDS Trade Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="28" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-cb-gds-all.log" />
 				<property name="bytes" value="10000" />
@@ -292,14 +292,14 @@
 		</property>
 		<property name="infoKey" value="cb-gds" />
 	</bean>
-	<bean id="loginServer" class="com.modusoperandi.web.Process">
+	<bean id="loginServer" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Login Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="31" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-dispatcher-all.log" />
 				<property name="bytes" value="10000" />
@@ -308,14 +308,14 @@
 		</property>
 		<property name="infoKey" value="gui-dispatcher" />
 	</bean>
-	<bean id="pageServerPB" class="com.modusoperandi.web.Process">
+	<bean id="pageServerPB" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="PB Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="32" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-pb-all.log" />
 				<property name="bytes" value="10000" />
@@ -324,14 +324,14 @@
 		</property>
 		<property name="infoKey" value="gui-pb" />
 	</bean>
-	<bean id="pageServerPBC" class="com.modusoperandi.web.Process">
+	<bean id="pageServerPBC" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="AQR Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="33" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-pbc-all.log" />
 				<property name="bytes" value="10000" />
@@ -340,14 +340,14 @@
 		</property>
 		<property name="infoKey" value="gui-pbc" />
 	</bean>
-	<bean id="pageServer" class="com.modusoperandi.web.Process">
+	<bean id="pageServer" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Rate Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="34" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-rates-all.log" />
 				<property name="bytes" value="10000" />
@@ -356,14 +356,14 @@
 		</property>
 		<property name="infoKey" value="gui-rates" />
 	</bean>
-	<bean id="pageServerNV" class="com.modusoperandi.web.Process">
+	<bean id="pageServerNV" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Rate NV Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="35" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-rates-nv-all.log" />
 				<property name="bytes" value="10000" />
@@ -372,14 +372,14 @@
 		</property>
 		<property name="infoKey" value="gui-rates-nv" />
 	</bean>
-	<bean id="pageServerEQD" class="com.modusoperandi.web.Process">
+	<bean id="pageServerEQD" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="EQD Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="36" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-eqd-all.log" />
 				<property name="bytes" value="10000" />
@@ -388,14 +388,14 @@
 		</property>
 		<property name="infoKey" value="gui-eqd" />
 	</bean>
-	<bean id="pageServerCredit" class="com.modusoperandi.web.Process">
+	<bean id="pageServerCredit" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Credit Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="37" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-credit-all.log" />
 				<property name="bytes" value="10000" />
@@ -404,14 +404,14 @@
 		</property>
 		<property name="infoKey" value="gui-credit" />
 	</bean>
-	<bean id="pageServerCreditNV" class="com.modusoperandi.web.Process">
+	<bean id="pageServerCreditNV" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Credit NV Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="38" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-credit-nv-all.log" />
 				<property name="bytes" value="10000" />
@@ -420,14 +420,14 @@
 		</property>
 		<property name="infoKey" value="gui-credit-nv" />
 	</bean>
-	<bean id="pageServerIRD" class="com.modusoperandi.web.Process">
+	<bean id="pageServerIRD" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="IRD Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="39" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-ird-all.log" />
 				<property name="bytes" value="10000" />
@@ -436,14 +436,14 @@
 		</property>
 		<property name="infoKey" value="gui-ird" />
 	</bean>
-	<bean id="pageServerEQDRonnie" class="com.modusoperandi.web.Process">
+	<bean id="pageServerEQDRonnie" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="EQD RONNIE Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="40" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-eqd-ronnie-all.log" />
 				<property name="bytes" value="10000" />
@@ -452,14 +452,14 @@
 		</property>
 		<property name="infoKey" value="gui-eqd-ronnie" />
 	</bean>
-	<bean id="pageServerCapula" class="com.modusoperandi.web.Process">
+	<bean id="pageServerCapula" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="Capula Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="41" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-pbc-capula-all.log" />
 				<property name="bytes" value="10000" />
@@ -468,14 +468,14 @@
 		</property>
 		<property name="infoKey" value="gui-pbc-capula" />
 	</bean>
-	<bean id="pageServerCB" class="com.modusoperandi.web.Process">
+	<bean id="pageServerCB" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="CB Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="42" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-cb-all.log" />
 				<property name="bytes" value="10000" />
@@ -484,14 +484,14 @@
 		</property>
 		<property name="infoKey" value="gui-cb" />
 	</bean>
-	<bean id="pageServerEB" class="com.modusoperandi.web.Process">
+	<bean id="pageServerEB" class="com.modusoperandi.model.Process">
 		<property name="windowTitle" value="EB Page Server" />
 		<property name="startCommand"
 			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
 		<property name="startCommandParameters" value="43" />
 		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
 		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
+			<bean class="com.modusoperandi.model.ProcessLog">
 				<property name="pathfilename"
 					value="e:\rbsfm\finesse\log\finesse-gui-eb-all.log" />
 				<property name="bytes" value="10000" />

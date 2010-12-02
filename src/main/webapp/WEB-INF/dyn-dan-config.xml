@@ -19,9 +19,9 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<util:list>
-				<value>com.modusoperandi.web.ProcessLog</value>
-				<value>com.modusoperandi.web.Process</value>
-				<value>com.modusoperandi.web.ConfigEntry</value>
+				<value>com.modusoperandi.model.ProcessLog</value>
+				<value>com.modusoperandi.model.Process</value>
+				<value>com.modusoperandi.model.ConfigEntry</value>
 			</util:list>
 		</property>
 		<property name="hibernateProperties">

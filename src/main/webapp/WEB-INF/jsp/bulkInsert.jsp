@@ -14,9 +14,9 @@
 			<p>You must be logged in as ADMIN to see this resource.</p>
 		</sec:authorize>
 		<sec:authorize ifAnyGranted="ROLE_ADMIN">
-			<p>This form allows you to populate your configuration from a Spring config XML.
+			<p>This form allows you to populate your configuration from a Spring config XML.<br/><br/>
 			This must define a <code>util:list</code> with <code>id="bulkUpdate"</code> containing <code>Process</code>
-			objects.</p>
+			objects, and a <code>util:list</code> with <code>id="properties"</code> containing <code>ConfigEntry</code> objects</p>
 			<p>This operation will <em>replace</em> any existing data.</p>
 			<form method="post" action="/bulkInsert.view">
 				<label for="fileLocation">

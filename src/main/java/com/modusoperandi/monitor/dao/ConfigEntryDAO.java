@@ -2,9 +2,9 @@ package com.modusoperandi.monitor.dao;
 
 import java.util.Collection;
 
-import com.modusoperandi.web.ConfigEntry;
-import com.modusoperandi.web.ConfigKey;
-import com.modusoperandi.web.Process;
+import com.modusoperandi.model.ConfigEntry;
+import com.modusoperandi.model.ConfigKey;
+import com.modusoperandi.model.Process;
 
 public interface ConfigEntryDAO {
     ConfigEntry getConfigEntry(ConfigKey configKey);

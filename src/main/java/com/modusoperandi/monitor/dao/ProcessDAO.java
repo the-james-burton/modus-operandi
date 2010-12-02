@@ -2,7 +2,7 @@ package com.modusoperandi.monitor.dao;
 
 import java.util.Collection;
 
-import com.modusoperandi.web.Process;
+import com.modusoperandi.model.Process;
 
 public interface ProcessDAO {
     Process getProcess(String windowTitle);

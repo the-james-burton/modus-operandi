@@ -14,7 +14,7 @@ import org.xvolks.jnative.misc.basicStructures.HWND;
 import org.xvolks.jnative.util.Callback;
 import org.xvolks.jnative.util.User32;
 
-import com.modusoperandi.web.Window;
+import com.modusoperandi.model.Window;
 
 /**
  * 
