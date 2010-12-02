@@ -5,29 +5,23 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+
 	<import resource="shared-definitions.xml"/>
 
 	<util:list id="properties">
 		<bean class="com.modusoperandi.web.ConfigEntry">
-			<property name="value" value="BAU"/>
+			<property name="value" value="UAT3"/>
 			<property name="key" value="ENVIRONMENT_NAME"/>
 		</bean>
 		<ref bean="propertiesLoaderInputDir"/>
 	</util:list>
 
 	<util:list id="bulkUpdate">
-		<ref bean="pageServerPB" />
-		<ref bean="pageServerPBC" />
-		<ref bean="pageServerCapula" />
-		<ref bean="pageServer" />
+		<ref bean="a2jRouter" />
+		<ref bean="swapswireRates1" />
+		<ref bean="swapswireRatesNV" />
 		<ref bean="pageServerNV" />
-		<ref bean="pageServerEQD" />
-		<ref bean="pageServerEQDRonnie" />
-		<ref bean="pageServerCredit" />
-		<ref bean="pageServerCreditNV" />
-		<ref bean="pageServerIRD" />
-		<ref bean="pageServerCB" />
-		<ref bean="pageServerEB" />
+		<ref bean="pageServer" />
 		<ref bean="loginServer" />
 	</util:list>
 </beans>

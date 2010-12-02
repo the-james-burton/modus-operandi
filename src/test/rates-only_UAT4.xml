@@ -5,11 +5,14 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
+	<import resource="shared-definitions.xml"/>
+
 	<util:list id="properties">
 		<bean class="com.modusoperandi.web.ConfigEntry">
 			<property name="value" value="UAT4"/>
 			<property name="key" value="ENVIRONMENT_NAME"/>
 		</bean>
+		<ref bean="propertiesLoaderInputDir"/>
 	</util:list>
 
 	<util:list id="bulkUpdate">
@@ -19,84 +22,4 @@
 		<ref bean="loginServer" />
 		<ref bean="gdsTradeServerRates" />
 	</util:list>
-	
-	<bean id="a2jRouter" class="com.modusoperandi.web.Process">
-		<property name="windowTitle" value="Argon 2 JMS Router" />
-		<property name="startCommand"
-			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-		<property name="startCommandParameters" value="11" />
-		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
-				<property name="pathfilename" value="e:\rbsfm\finesse\log\finesse-a2j-all.log" />
-				<property name="bytes" value="10000" />
-				<property name="lines" value="100" />
-			</bean>
-		</property>
-		<property name="infoKey" value="a2j" />
-	</bean>
-	<bean id="swapswireRates1" class="com.modusoperandi.web.Process">
-		<property name="windowTitle" value="1 Rates SwapsWire" />
-		<property name="startCommand"
-			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-		<property name="startCommandParameters" value="12" />
-		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
-				<property name="pathfilename"
-					value="e:\rbsfm\finesse\log\finesse-rates1-all.log" />
-				<property name="bytes" value="10000" />
-				<property name="lines" value="100" />
-			</bean>
-		</property>
-		<property name="infoKey" value="rates1" />
-	</bean>
-	<bean id="gdsTradeServerRates" class="com.modusoperandi.web.Process">
-		<property name="windowTitle" value="Rate GDS Trade Server" />
-		<property name="startCommand"
-			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-		<property name="startCommandParameters" value="27" />
-		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
-				<property name="pathfilename"
-					value="e:\rbsfm\finesse\log\finesse-rates-gds-all.log" />
-				<property name="bytes" value="10000" />
-				<property name="lines" value="100" />
-			</bean>
-		</property>
-		<property name="infoKey" value="rates-gds" />
-	</bean>
-	<bean id="loginServer" class="com.modusoperandi.web.Process">
-		<property name="windowTitle" value="Login Server" />
-		<property name="startCommand"
-			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-		<property name="startCommandParameters" value="31" />
-		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
-				<property name="pathfilename"
-					value="e:\rbsfm\finesse\log\finesse-gui-dispatcher-all.log" />
-				<property name="bytes" value="10000" />
-				<property name="lines" value="100" />
-			</bean>
-		</property>
-		<property name="infoKey" value="gui-dispatcher" />
-	</bean>
-	<bean id="pageServer" class="com.modusoperandi.web.Process">
-		<property name="windowTitle" value="Rate Page Server" />
-		<property name="startCommand"
-			value="e:\rbsfm\finesse\config\services\StartFinesseServer.bat" />
-		<property name="startCommandParameters" value="34" />
-		<property name="workingDirectory" value="e:\rbsfm\finesse\config\services" />
-		<property name="log">
-			<bean class="com.modusoperandi.web.ProcessLog">
-				<property name="pathfilename"
-					value="e:\rbsfm\finesse\log\finesse-gui-rates-all.log" />
-				<property name="bytes" value="10000" />
-				<property name="lines" value="100" />
-			</bean>
-		</property>
-		<property name="infoKey" value="gui-rates" />
-	</bean>
 </beans>

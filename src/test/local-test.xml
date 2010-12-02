@@ -7,8 +7,12 @@
 
 	<util:list id="properties">
 		<bean class="com.modusoperandi.web.ConfigEntry">
-			<property name="value" value="LOCAL"/>
+			<property name="value" value="LOCAL TEST"/>
 			<property name="key" value="ENVIRONMENT_NAME"/>
+		</bean>
+		<bean id="propertiesLoaderInputDir" class="com.modusoperandi.web.ConfigEntry">
+			<property name="value" value="\\lonms03418\cruise\builds\analysis.finesse\reports\config\properties"/>
+			<property name="key" value="PROPERTIES_LOADER_INPUT_DIR"/>
 		</bean>
 	</util:list>
 

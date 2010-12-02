@@ -13,51 +13,45 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.modusoperandi.monitor.dao.ConfigEntryDAO;
+
 /**
  * <p>
- * Utility to load properties files from a given directory for processes
- * identified by the environment they running on  (such as UAT/BAU etc.)
+ * Utility to load properties files from a given directory for processes identified by the environment they running on (such as UAT/BAU etc.)
  * </p>
- * <p>This utility can be set up to keep its information up-to-date by
- * running at configurable intervals.
+ * <p>
+ * This utility can be set up to keep its information up-to-date by running at configurable intervals.
  * </p>
- * 
- * <p>This class was written to be thread-safe.</p>
+ * <p>
+ * This class was written to be thread-safe.
+ * </p>
  * 
  * @author Silvio Molinari
  */
 public class PropertiesLoader extends TimerTask {
-
     /**
      * Logger object for this class.
      */
-    private final Log logger = LogFactory.getLog(this.getClass());
-
+    private final Log      logger        = LogFactory.getLog(this.getClass());
     /**
-     * The input directory to load properties files from and monitor for
-     * changes.
+     * DAO to retrieve the input directory to load properties files from and monitor for changes.
      */
-    private File inputDirectory;
-
+    private ConfigEntryDAO configEntryDAO;
     /**
      * The default file extension for the properties files.
      */
-    private String fileExtension = "txt";
-
+    private String         fileExtension = "txt";
     /**
-     * Local cache containing all the information from the properties
-     * directory.
+     * Local cache containing all the information from the properties directory.
      */
-    Map<String, Entry> properties = new HashMap<String, Entry>();
-
+    Map<String, Entry>     properties    = new HashMap<String, Entry>();
     /**
      * Object used to synchronise thread-sensitive code.
      */
-    private Object lockFlag = new Object();
+    private final Object   lockFlag      = new Object();
 
     /**
-     * Method used by the scheduling framework to run the utility in
-     * background threads.
+     * Method used by the scheduling framework to run the utility in background threads.
      */
     @Override
     public void run() {
@@ -70,20 +64,20 @@ public class PropertiesLoader extends TimerTask {
 
     /**
      * Loads files from directory, and keeps information up-to-date.
+     * 
      * @throws IOException
      */
     private void refresh() throws IOException {
-        if (inputDirectory.isDirectory() && inputDirectory.canRead()) {
+        File inputDirectory = getInputDirectory();
+        if (inputDirectory != null && inputDirectory.isDirectory() && inputDirectory.canRead()) {
             logger.debug("Scanning info directory for changes: started.");
             HashMap<String, Entry> tmpMap = new HashMap<String, Entry>();
             File[] files = inputDirectory.listFiles();
-
             String fileName = null;
             Entry entry = null;
             for (File file : files) {
                 fileName = file.getName();
                 entry = properties.get(fileName);
-
                 if (entry != null && file.lastModified() <= entry.lastModified) {
                     // entry is still good
                     tmpMap.put(fileName, entry);
@@ -121,8 +115,10 @@ public class PropertiesLoader extends TimerTask {
     /**
      * Tells you if any data was loaded for the given parameters.
      * 
-     * @param environment Which environment to look for eg. <i>BAU</i>.
-     * @param server Which server instance to look for eg. <i>gui-ird</i>.
+     * @param environment
+     *            Which environment to look for eg. <i>BAU</i>.
+     * @param server
+     *            Which server instance to look for eg. <i>gui-ird</i>.
      * @return true if data was in the cache.
      */
     public boolean hasProperties(String environment, String server) {
@@ -134,57 +130,57 @@ public class PropertiesLoader extends TimerTask {
 
     /**
      * <p>
-     * Retrieves a map containing all the data for the given server/environment combination, or an
-     * empty map if no data could be found.
+     * Retrieves a map containing all the data for the given server/environment combination, or an empty map if no data could be found.
      * </p>
      * 
-     * @param environment Which environment to look for eg. <i>BAU</i>.
-     * @param server Which server instance to look for eg. <i>gui-ird</i>.
-     * @param forceRefresh Whether to force a refresh, or get the data from the cache.
+     * @param environment
+     *            Which environment to look for eg. <i>BAU</i>.
+     * @param server
+     *            Which server instance to look for eg. <i>gui-ird</i>.
+     * @param forceRefresh
+     *            Whether to force a refresh, or get the data from the cache.
      * @return A map containing the relevant data.
-     * @throws IOException If the data cannot be refreshed.
+     * @throws IOException
+     *             If the data cannot be refreshed.
      */
     public Map<String, String> getProperties(String environment, String server, boolean forceRefresh) throws IOException {
         return getProperties(makeKey(environment, server), forceRefresh);
     }
 
-
     /**
-    * <p>
-    * Retrieves a map containing all the data for the given server/environment combination, or an
-    * empty map if no data could be found. The data is retrieved from the cache.
-    * </p>
-    * 
-    * @param environment Which environment to look for eg. <i>BAU</i>.
-    * @param server Which server instance to look for eg. <i>gui-ird</i>.
-    * @return A map containing the relevant data.
-    */
+     * <p>
+     * Retrieves a map containing all the data for the given server/environment combination, or an empty map if no data could be found. The data is retrieved
+     * from the cache.
+     * </p>
+     * 
+     * @param environment
+     *            Which environment to look for eg. <i>BAU</i>.
+     * @param server
+     *            Which server instance to look for eg. <i>gui-ird</i>.
+     * @return A map containing the relevant data.
+     */
     public Map<String, String> getProperties(String environment, String server) {
         Map<String, String> returnProps = null;
         try {
             returnProps = getProperties(makeKey(environment, server), false);
         } catch (IOException ioe) {
-            //This will never happen because a refresh is never requested in this method.
+            // This will never happen because a refresh is never requested in this method.
             logger.error("Unexpected IOException whilst retrieving cached data", ioe);
         }
         return returnProps;
     }
 
     /**
-     * Abstracts away the way in which the server/environment combination is used to retrieve the
-     * data.
+     * Abstracts away the way in which the server/environment combination is used to retrieve the data.
      * 
-     * @param environment Which environment to look for eg. <i>BAU</i>.
-     * @param server Which server instance to look for eg. <i>gui-ird</i>.
+     * @param environment
+     *            Which environment to look for eg. <i>BAU</i>.
+     * @param server
+     *            Which server instance to look for eg. <i>gui-ird</i>.
      * @return
      */
     private String makeKey(String environment, String server) {
-        return new StringBuilder(environment)
-            .append('-')
-            .append(server)
-            .append('.')
-            .append(fileExtension)
-            .toString();
+        return new StringBuilder(environment).append('-').append(server).append('.').append(fileExtension).toString();
     }
 
     /**
@@ -195,7 +191,6 @@ public class PropertiesLoader extends TimerTask {
      */
     private Map<String, String> getProperties(String key, boolean forceRefresh) throws IOException {
         Map<String, String> returnProps = null;
-
         synchronized (lockFlag) {
             if (forceRefresh) {
                 refresh();
@@ -207,17 +202,16 @@ public class PropertiesLoader extends TimerTask {
                 returnProps = new HashMap<String, String>();
                 while (iter.hasNext()) {
                     propertyName = (String) iter.next();
-                    returnProps.put(propertyName, cachedProps
-                            .getProperty(propertyName));
+                    returnProps.put(propertyName, cachedProps.getProperty(propertyName));
                 }
             }
         }
-
         return returnProps;
     }
 
     /**
      * Setter method to customise the file extension.
+     * 
      * @param fileExtension
      */
     public void setFileExtension(String fileExtension) {
@@ -226,6 +220,7 @@ public class PropertiesLoader extends TimerTask {
 
     /**
      * Count of how many server/environment combinations are in the cache.
+     * 
      * @return
      */
     public int count() {
@@ -239,22 +234,30 @@ public class PropertiesLoader extends TimerTask {
      * 
      * @param propertiesFileDirectory
      */
-    public void setInputDirectory(String propertiesFileDirectory) {
-        File inputDir = new File(propertiesFileDirectory);
-        if (!inputDir.isDirectory()) {
-            logger.error(propertiesFileDirectory + " is not a valid directory");
+    private File getInputDirectory() {
+        File inputDir = null;
+        ConfigEntry configEntry = configEntryDAO.getConfigEntry(ConfigKey.PROPERTIES_LOADER_INPUT_DIR);
+        if (configEntry != null && configEntry.getValue() != null) {
+            inputDir = new File(configEntry.getValue());
+            if (!inputDir.isDirectory()) {
+                logger.error(configEntry.getValue() + " is not a valid directory");
+            }
         }
+        return inputDir;
+    }
 
-        this.inputDirectory = inputDir;
+    public void setConfigEntryDAO(ConfigEntryDAO configEntryDAO) {
+        this.configEntryDAO = configEntryDAO;
     }
 
     /**
-     * Utility class used to associate a properties file with the last modified for the original
-     * input file. This allows the process to decide if a given file should be reloaded.
+     * Utility class used to associate a properties file with the last modified for the original input file. This allows the process to decide if a given file
+     * should be reloaded.
+     * 
      * @author Silvio Molinari
      */
     private class Entry {
-        long lastModified;
+        long       lastModified;
         Properties props;
     }
 }
