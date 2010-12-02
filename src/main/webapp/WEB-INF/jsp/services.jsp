@@ -35,25 +35,43 @@
 		</head>
 		<body>
 			<div id="main">
-			<h1 title="${services.machine}">${services.environment} Process Monitor</h1>
-			<ul id="icons" class="ui-widget ui-helper-clearfix">
-				<li id="refreshButton" class="ui-state-default ui-corner-all ui-state-disabled"
-					title="Refresh All"><span class="ui-icon ui-icon-refresh"></span></li>
-				<li id="startAllButton" class="ui-state-default ui-corner-all ui-state-disabled"
-					title="Start All"><span class="ui-icon ui-icon-play"></span></li>
-				<li id="stopAllButton" class="ui-state-default ui-corner-all ui-state-disabled"
-					title="Stop All"><span class="ui-icon ui-icon-stop"></span></li>
-				<li id="configureButton" class="ui-state-default ui-corner-all ui-state-disabled"
-					title="Update Configuration"><span class="ui-icon ui-icon-gear"></span></li>
-				<li id="logInOutButton" class="ui-state-default ui-corner-all"
-					title="Log in"><span class="ui-icon ui-icon-locked"></span></li>
-			</ul>
-			<div id="serviceDetails">
-				<jsp:directive.include file="/WEB-INF/jsp/services-ajax.jsp"/>
+				<h1 title="${services.machine}">${services.environment} Process Monitor</h1>
+				<ul id="icons" class="ui-widget ui-helper-clearfix">
+					<li id="refreshButton" class="ui-state-default ui-corner-all ui-state-disabled"
+						title="Refresh All"><span class="ui-icon ui-icon-refresh"></span></li>
+					<li id="startAllButton" class="ui-state-default ui-corner-all ui-state-disabled"
+						title="Start All"><span class="ui-icon ui-icon-play"></span></li>
+					<li id="stopAllButton" class="ui-state-default ui-corner-all ui-state-disabled"
+						title="Stop All"><span class="ui-icon ui-icon-stop"></span></li>
+					<li id="configureButton" class="ui-state-default ui-corner-all ui-state-disabled"
+						title="Update Configuration"><span class="ui-icon ui-icon-gear"></span></li>
+					<li id="logInOutButton" class="ui-state-default ui-corner-all"
+						title="Log in"><span class="ui-icon ui-icon-locked"></span></li>
+				</ul>
+				<div id="serviceDetails">
+					<jsp:directive.include file="/WEB-INF/jsp/services-ajax.jsp"/>
+				</div>
+				<div id="validXHTML"><img src="images/maven-feather.png" alt="Maven"/><img src="images/valid-xhtml10-blue.png" alt="Valid XHTML"/></div>
 			</div>
-			<div id="validXHTML"><img src="images/maven-feather.png" alt="Maven"/><img src="images/valid-xhtml10-blue.png" alt="Valid XHTML"/></div>
-		</div>
-		<jsp:directive.include file="/WEB-INF/jsp/dialogues.jspf"/>
+			<div id="errorMessage" style="visibility: hidden">
+				<div class="ui-widget">
+					<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+						<p>
+							<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"><!-- --></span>
+							<strong>Alert:</strong>
+							<span>The processes list could not be refreshed.</span>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div style="display: none;">
+				<div id="loggedOutDialog" title="Session trouble...">
+					<p>
+						<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"><!-- --></span>
+						<span>Your session has become invalid. Please log in again.</span>
+					</p>
+				</div>
+			</div>
 		</body>
 	</html>
 </jsp:root>
