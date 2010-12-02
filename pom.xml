@@ -25,6 +25,10 @@
 			<id>JBoss</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
 		</repository>
+		<repository>
+			<id>dummy.repository</id>
+			<url>file://${basedir}/local-repo/</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -83,8 +87,6 @@
 			<groupId>org.xvolks</groupId>
 			<artifactId>jnative</artifactId>
 			<version>1.4RC3</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/src/local-lib/JNative.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
@@ -95,8 +97,6 @@
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
 			<version>3.2.7</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/src/local-lib/platform.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
