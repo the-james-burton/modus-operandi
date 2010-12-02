@@ -19,9 +19,9 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedClasses">
 			<util:list>
-				<value>org.prototype.web.ProcessLog</value>
-				<value>org.prototype.web.Process</value>
-				<value>org.prototype.web.ConfigEntry</value>
+				<value>com.modusoperandi.web.ProcessLog</value>
+				<value>com.modusoperandi.web.Process</value>
+				<value>com.modusoperandi.web.ConfigEntry</value>
 			</util:list>
 		</property>
 		<property name="hibernateProperties">
@@ -41,10 +41,10 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
-	<bean id="processDAO" class="org.prototype.monitor.dao.hsql.HSQLProcessDAOImpl">
+	<bean id="processDAO" class="com.modusoperandi.monitor.dao.hsql.HSQLProcessDAOImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	<bean id="configDAO" class="org.prototype.monitor.dao.hsql.HSQLConfigEntryDAO">
+	<bean id="configDAO" class="com.modusoperandi.monitor.dao.hsql.HSQLConfigEntryDAO">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 </beans>

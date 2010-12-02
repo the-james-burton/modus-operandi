@@ -32,7 +32,7 @@
 	<servlet>
 		<display-name>RedirectionServlet</display-name>
 		<servlet-name>RedirectionServlet</servlet-name>
-		<servlet-class>org.prototype.web.RedirectionServlet</servlet-class>
+		<servlet-class>com.modusoperandi.web.RedirectionServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>spring</servlet-name>

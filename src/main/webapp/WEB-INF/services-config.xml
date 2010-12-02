@@ -40,26 +40,26 @@
 		</property>
 	</bean>
 
-	<bean id="propertiesLoader" class="org.prototype.web.PropertiesLoader">
+	<bean id="propertiesLoader" class="com.modusoperandi.web.PropertiesLoader">
 		<property name="fileExtension" value="txt" />
 		<property name="inputDirectory"
 			value="\\lonms03418\cruise\builds\analysis.finesse\reports\config\properties" />
 	</bean>
 
-	<bean id="abstractServices" class="org.prototype.monitor.AbstractProcessMonitorService" abstract="true">
+	<bean id="abstractServices" class="com.modusoperandi.monitor.AbstractProcessMonitorService" abstract="true">
 		<property name="refreshRatio" value="10" />
 		<property name="propertiesLoader" ref="propertiesLoader" />
 		<property name="processDAO" ref="processDAO"/>
 		<property name="configDAO" ref="configDAO"/>
 	</bean>
 
-	<bean id="services" class="org.prototype.monitor.jna.ProcessMonitorServiceJnaImpl" parent="abstractServices" />
+	<bean id="services" class="com.modusoperandi.monitor.jna.ProcessMonitorServiceJnaImpl" parent="abstractServices" />
 
 	<!--
 		<bean id="services"
-		class="org.prototype.monitor.jnative.ProcessMonitorServiceJNativeImpl"
+		class="com.modusoperandi.monitor.jnative.ProcessMonitorServiceJNativeImpl"
 		parent="abstractServices" /> <bean id="services"
-		class="org.prototype.monitor.exe.Services" parent="abstractServices">
+		class="com.modusoperandi.monitor.exe.Services" parent="abstractServices">
 		<property name="killCommand" value="cmd /c %s\process -q " />
 		<property name="psCommand" value="cmd /c %s\cprocess /stab " />
 		<property name="executablesLocation" value="K:\deployment\exe" />
