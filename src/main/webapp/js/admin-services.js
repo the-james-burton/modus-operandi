@@ -83,10 +83,9 @@ function configure(event) {
 							ajax : true
 						}),
 						cache : false,
-						success : function (data, textStatus, XMLHttpRequest) {
-							if (data == 'OK') {
-								
-							}
+						success : function (envName, textStatus, XMLHttpRequest) {
+							$('#envName').html(envName + ' Process Monitor');
+							refresh('GET');
 							$('#bulkInsertDialog').html('File loaded successfully.').dialog({
 									buttons: {
 										OK : function() {
@@ -99,7 +98,15 @@ function configure(event) {
 							__hideRefresh();
 						},
 						error : function(XMLHttpRequest, textStatus, errorThrown) {
-							alert('no luck...');
+							$('#bulkInsertDialog').html('Error loading file. Please check logs to diagnose.').dialog({
+									buttons: {
+										OK : function() {
+											$(this).dialog('close');
+											$('#bulkInsertDialog').remove();
+										}
+									}
+								}
+							);
 							__hideRefresh();
 						}
 					});

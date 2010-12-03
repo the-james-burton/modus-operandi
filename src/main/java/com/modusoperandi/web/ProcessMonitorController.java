@@ -211,7 +211,9 @@ public class ProcessMonitorController {
             log.info(String.format("Loaded %d Process objects from %s.", processes.size(), fileName));
             services.removeAllProcesses();
             services.addAllProcesses(processes);
-            model.addAttribute("output", "OK");
+            services.refresh();
+            // return environment name so it can be displayed
+            model.addAttribute("output", services.getEnvironment());
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             model.addAttribute("output", e.getMessage());
@@ -224,6 +226,7 @@ public class ProcessMonitorController {
     @RequestMapping(value = "/deleteall.view", method = RequestMethod.GET)
     public String deleteAll() {
         services.removeAllProcesses();
+        services.removeAllConfigEntries();
         return "output";
     }
 

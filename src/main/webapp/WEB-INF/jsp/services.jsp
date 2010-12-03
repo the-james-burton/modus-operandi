@@ -35,7 +35,7 @@
 		</head>
 		<body>
 			<div id="main">
-				<h1 title="${services.machine}">${services.environment} Process Monitor</h1>
+				<h1 id="envName" title="${services.machine}">${services.environment} Process Monitor</h1>
 				<ul id="icons" class="ui-widget ui-helper-clearfix">
 					<li id="refreshButton" class="ui-state-default ui-corner-all ui-state-disabled"
 						title="Refresh All"><span class="ui-icon ui-icon-refresh"></span></li>
