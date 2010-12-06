@@ -51,8 +51,9 @@
 		<property name="configDAO" ref="configDAO"/>
 	</bean>
 
-	<bean id="services" class="com.modusoperandi.monitor.jna.ProcessMonitorServiceJnaImpl" parent="abstractServices" />
-
+	<bean id="win32ServicesImpl" class="com.modusoperandi.monitor.jna.ProcessMonitorServiceWin32JnaImpl" parent="abstractServices" lazy-init="true"/>
+	<bean id="processMonitorFactory" class="com.modusoperandi.monitor.ProcessMonitorServiceFactoryImpl" />
+	<bean id="services" factory-bean="processMonitorFactory" factory-method="getService"/>
 	<!--
 		<bean id="services"
 		class="com.modusoperandi.monitor.jnative.ProcessMonitorServiceJNativeImpl"

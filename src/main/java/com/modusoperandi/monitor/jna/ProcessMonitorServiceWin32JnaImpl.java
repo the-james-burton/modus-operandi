@@ -1,6 +1,5 @@
 package com.modusoperandi.monitor.jna;
 
-
 import com.modusoperandi.model.Process;
 import com.modusoperandi.model.ProcessState;
 import com.modusoperandi.model.Window;
@@ -11,7 +10,7 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
-public class ProcessMonitorServiceJnaImpl extends AbstractProcessMonitorService {
+public class ProcessMonitorServiceWin32JnaImpl extends AbstractProcessMonitorService {
     /**
      * Windows API constant to specify that a process/window being started should be shown.
      */
@@ -59,7 +58,7 @@ public class ProcessMonitorServiceJnaImpl extends AbstractProcessMonitorService 
                 for (;;) {
                     Thread.sleep(2000L);
                     refresh();
-                    if (System.currentTimeMillis() - startTime > 30000L && process.getPid() != 0) {
+                    if (System.currentTimeMillis() - startTime > getShutdownWaitTime() && process.getPid() != 0) {
                         getLogger().info("Process " + process.getPid() + " is not responding in a timely fashion. Forcing shutdown!!");
                         Kernel32 k32 = Kernel32.INSTANCE;
                         HANDLE handle = k32.OpenProcess(PROCESS_TERMINATE, false, process.getPid());

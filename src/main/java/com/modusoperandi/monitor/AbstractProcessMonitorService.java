@@ -36,6 +36,10 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
      */
     private static final long    DEFAULT_STARTUP_DETECTION_WAIT_TIME = 30000L;
     /**
+     * Time to wait for a process to shut down.
+     */
+    private static final long    DEFAULT_SHUT_DOWN_WAIT_TIME         = 2000L;
+    /**
      * Time to sleep in between checks.
      */
     private static final long    DEFAULT_STARTUP_DETECTION_INTERVAL  = 500L;
@@ -71,6 +75,10 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
      * Configurable time to wait for a process detection at start time.
      */
     private final long           startUpDetectionWaitTime            = DEFAULT_STARTUP_DETECTION_WAIT_TIME;
+    /**
+     * Configurable time to wait for a process to shut down gracefully.
+     */
+    private long                 shutdownWaitTime                    = DEFAULT_SHUT_DOWN_WAIT_TIME;
     /**
      * Sleep time during checks.
      */
@@ -278,6 +286,14 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
 
     protected Log getLogger() {
         return logger;
+    }
+
+    public long getShutdownWaitTime() {
+        return shutdownWaitTime;
+    }
+
+    public void setShutdownWaitTime(long shutdownWaitTime) {
+        this.shutdownWaitTime = shutdownWaitTime;
     }
 
     @Override
