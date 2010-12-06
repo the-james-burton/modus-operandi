@@ -52,6 +52,7 @@
 	</bean>
 
 	<bean id="win32ServicesImpl" class="com.modusoperandi.monitor.jna.ProcessMonitorServiceWin32JnaImpl" parent="abstractServices" lazy-init="true"/>
+	<bean id="linuxServicesImpl" class="com.modusoperandi.monitor.ext.ProcessMonitorServiceUnixExternalProcessImpl" parent="abstractServices" lazy-init="true"/>
 	<bean id="processMonitorFactory" class="com.modusoperandi.monitor.ProcessMonitorServiceFactoryImpl" />
 	<bean id="services" factory-bean="processMonitorFactory" factory-method="getService"/>
 	<!--
