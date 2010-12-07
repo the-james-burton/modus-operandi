@@ -18,10 +18,9 @@ public class ProcessMonitorServiceFactoryImpl implements ProcessMonitorServiceFa
     /**
      * Logger for this class.
      */
-    private static final Log logger       = LogFactory.getLog(ProcessMonitorServiceFactoryImpl.class);
-    private BeanFactory        beanFactory;
+    private static final Log logger = LogFactory.getLog(ProcessMonitorServiceFactoryImpl.class);
+    private BeanFactory      beanFactory;
 
-    
     @Override
     public ProcessMonitorService getService() {
         logger.info(String.format("Getting service for the %s operating system.", System.getProperty("os.name")));
