@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
+import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,7 +54,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     /**
      * The in-memory representation of the processes being monitored.
      */
-    private Map<String, Process> processes                           = new HashMap<String, Process>();
+    private Map<String, Process> processes                           = new TreeMap<String, Process>();
     /**
      * How often the refresh mechanism should kick in.
      */
@@ -147,7 +147,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     }
 
     private synchronized void setProcesses(Collection<Process> newProcesses) {
-        Map<String, Process> refreshed = new HashMap<String, Process>();
+        Map<String, Process> refreshed = new TreeMap<String, Process>();
         for (Process process : newProcesses) {
             String key = process.getWindowTitle();
             if (processes.containsKey(key)) {
