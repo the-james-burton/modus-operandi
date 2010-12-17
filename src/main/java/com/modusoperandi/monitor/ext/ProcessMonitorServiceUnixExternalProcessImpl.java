@@ -38,10 +38,6 @@ public class ProcessMonitorServiceUnixExternalProcessImpl extends AbstractProces
         logger.info("Refreshing...");
         BufferedReader br = null;
         try {
-            
-            
-            
-            
             java.lang.Process process = new ProcessBuilder("/bin/ps", "-ef").start();
             InputStream is = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
@@ -54,7 +50,10 @@ public class ProcessMonitorServiceUnixExternalProcessImpl extends AbstractProces
             throw new ProcessMonitorServiceException(e.getMessage(), e);
         } finally {
             if (br != null) {
-                try { br.close(); } catch (IOException e) {}
+                try {
+                    br.close();
+                } catch (IOException e) {
+                }
             }
         }
     }

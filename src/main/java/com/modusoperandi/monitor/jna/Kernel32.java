@@ -11,7 +11,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author Silvio Molinari
  */
 public interface Kernel32 extends com.sun.jna.platform.win32.Kernel32 {
-    Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class, W32APIOptions.UNICODE_OPTIONS);
+    Kernel32 KERNEL32 = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class, W32APIOptions.UNICODE_OPTIONS);
 
     boolean TerminateProcess(HANDLE hObject, int exitCode);
 }

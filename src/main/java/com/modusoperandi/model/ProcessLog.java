@@ -33,8 +33,8 @@ import com.modusoperandi.monitor.ProcessMonitorServiceException;
 public class ProcessLog extends TimerTask {
     private static final DateFormat dateFormat              = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final Log               logger                  = LogFactory.getLog(this.getClass());
-    private static final int       DEFAULT_LOG_SIZE        = 5000;
-    private static final int       DEFAULT_NUMBER_OF_LINES = 20;
+    private static final int        DEFAULT_LOG_SIZE        = 5000;
+    private static final int        DEFAULT_NUMBER_OF_LINES = 20;
     private Long                    id;
     private String                  pathfilename;
     private int                     bytes                   = DEFAULT_LOG_SIZE;
@@ -266,14 +266,14 @@ public class ProcessLog extends TimerTask {
         byte[] buffer = new byte[bytes];
         int byteCount = log.read(buffer);
         if (byteCount > -1) {
-        pointer = log.getFilePointer();
-        BufferedReader input = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buffer)));
-        while (input.ready()) {
-            String line = input.readLine();
-            if (!StringUtils.isBlank(line)) {
-                text.add(line);
+            pointer = log.getFilePointer();
+            BufferedReader input = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buffer)));
+            while (input.ready()) {
+                String line = input.readLine();
+                if (!StringUtils.isBlank(line)) {
+                    text.add(line);
+                }
             }
-        }
         }
     }
 

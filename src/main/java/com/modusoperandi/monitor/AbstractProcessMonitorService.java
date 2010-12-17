@@ -74,7 +74,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     /**
      * Configurable time to wait for a process detection at start time.
      */
-    private long           startUpDetectionWaitTime            = DEFAULT_STARTUP_DETECTION_WAIT_TIME;
+    private long                 startUpDetectionWaitTime            = DEFAULT_STARTUP_DETECTION_WAIT_TIME;
     /**
      * Configurable time to wait for a process to shut down gracefully.
      */
@@ -82,7 +82,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     /**
      * Sleep time during checks.
      */
-    private long           startUpDetectionInterval            = DEFAULT_STARTUP_DETECTION_INTERVAL;
+    private long                 startUpDetectionInterval            = DEFAULT_STARTUP_DETECTION_INTERVAL;
     /**
      * This machine's name.
      */
@@ -198,12 +198,12 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         } else if (process.isStarting() || process.isRunning()) {
             logger.info("Ignoring request for start for " + process.getWindowTitle());
         } else {
-        logger.info("Starting : " + process);
-        // flag this
-        process.setState(STARTING);
-        // perform the check in the background as this could take a while!
-        Thread startUpCheckerThread = new Thread(new StartUpThread(process), "StartUpChecker[" + process.getWindowTitle() + "]");
-        startUpCheckerThread.start();
+            logger.info("Starting : " + process);
+            // flag this
+            process.setState(STARTING);
+            // perform the check in the background as this could take a while!
+            Thread startUpCheckerThread = new Thread(new StartUpThread(process), "StartUpChecker[" + process.getWindowTitle() + "]");
+            startUpCheckerThread.start();
         }
     }
 

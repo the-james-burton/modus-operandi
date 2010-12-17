@@ -17,30 +17,25 @@ import org.xvolks.jnative.util.User32;
 import com.modusoperandi.model.Window;
 
 /**
- * 
  * @author Silvio Molinari
  */
 public class WindowsEnumerationJNativeCallbackImpl implements Callback {
-    
     private static final Log logger = LogFactory.getLog(WindowsEnumerationJNativeCallbackImpl.class);
-
     private final List<Long> windowHandles;
 
     public WindowsEnumerationJNativeCallbackImpl() {
         windowHandles = new ArrayList<Long>();
     }
-    
+
     public synchronized Map<String, Window> getWindowDetails(Collection<String> windowNames) {
         Map<String, Window> windows = new HashMap<String, Window>();
-
         String windowName = null;
         for (Long key : windowHandles) {
             try {
                 HWND windowHandle = new HWND(key.intValue());
                 windowName = User32.GetWindowText(windowHandle);
                 if (windowName != null && windowName.length() > 0 && windowNames.contains(windowName)) {
-                    JNativeWindow window = new JNativeWindow(User32
-                            .GetWindowThreadProcessId(windowHandle), windowName);
+                    JNativeWindow window = new JNativeWindow(User32.GetWindowThreadProcessId(windowHandle), windowName);
                     window.key = key;
                     windows.put(windowName, window);
                 }
@@ -48,7 +43,6 @@ public class WindowsEnumerationJNativeCallbackImpl implements Callback {
                 logger.error("Failed to process window handle " + key);
             }
         }
-
         return windows;
     }
 
@@ -88,9 +82,11 @@ public class WindowsEnumerationJNativeCallbackImpl implements Callback {
 
     public static class JNativeWindow extends Window {
         private long key;
+
         public JNativeWindow(int pid, String name) {
             super(pid, name);
         }
+
         public long getKey() {
             return key;
         }
