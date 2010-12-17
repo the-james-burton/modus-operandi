@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -254,11 +255,12 @@ public class ProcessMonitorController {
         if (props == null) {
             return "No data available";
         }
-        Iterator<String> iter = props.keySet().iterator();
+        Iterator<Entry<String, String>> iter = props.entrySet().iterator();
         StringBuilder sb = new StringBuilder("<table>");
+        Entry<String, String> key = null;
         while (iter.hasNext()) {
-            String key = iter.next();
-            sb.append("<tr><td>").append(key).append("</td><td>").append(props.get(key)).append("</td></tr>");
+            key = iter.next();
+            sb.append("<tr><td>").append(key.getKey()).append("</td><td>").append(key.getValue()).append("</td></tr>");
         }
         return sb.append("</table>").toString();
     }

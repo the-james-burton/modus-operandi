@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
@@ -73,12 +74,12 @@ public class StaticProcessDAOImpl implements ProcessDAO {
             }
         } else {
             // we could be in testing mode try wild card match
-            Iterator<String> keyIterator = processes.keySet().iterator();
-            String key = null;
+            Iterator<Entry<String, List<Process>>> keyIterator = processes.entrySet().iterator();
+            Entry<String, List<Process>> entry = null;
             while (keyIterator.hasNext()) {
-                key = keyIterator.next();
-                if (hostname.matches(key)) {
-                    setProcesses(processes.get(key));
+                entry = keyIterator.next();
+                if (hostname.matches(entry.getKey())) {
+                    setProcesses(entry.getValue());
                     break;
                 }
             }
