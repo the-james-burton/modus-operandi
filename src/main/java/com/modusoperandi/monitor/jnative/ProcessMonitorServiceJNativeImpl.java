@@ -19,7 +19,7 @@ import com.modusoperandi.monitor.ProcessMonitorServiceException;
 import com.modusoperandi.monitor.jnative.WindowsEnumerationJNativeCallbackImpl.JNativeWindow;
 
 /**
- * Implements the process services via a native proxy layer hooking directly into the User32, Shell32 and Kernel32.
+ * Implements the process services via a native proxy layer hooking directly into the User32, Shell32Lib and Kernel32Lib.
  * 
  * @author Silvio Molinari
  */

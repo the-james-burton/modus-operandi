@@ -35,7 +35,7 @@ public class ProcessMonitorServiceWin32JnaImpl extends AbstractProcessMonitorSer
 
     @Override
     protected void startProcessSpecificImpl(Process process) throws ProcessMonitorServiceException {
-        Shell32 sh = Shell32.SHELL32;
+        Shell32Lib sh = Shell32Lib.SHELL32;
         WinDef.HINSTANCE inst = sh.ShellExecute(0, "open", process.getStartCommand(), process.getStartCommandParameters(), process.getWorkingDirectory(),
                 SW_SHOW);
         if (inst == null) {
@@ -60,7 +60,7 @@ public class ProcessMonitorServiceWin32JnaImpl extends AbstractProcessMonitorSer
                     refresh();
                     if (System.currentTimeMillis() - startTime > getShutdownWaitTime() && process.getPid() != 0) {
                         getLogger().info("Process " + process.getPid() + " is not responding in a timely fashion. Forcing shutdown!!");
-                        Kernel32 k32 = Kernel32.KERNEL32;
+                        Kernel32Lib k32 = Kernel32Lib.KERNEL32;
                         HANDLE handle = k32.OpenProcess(PROCESS_TERMINATE, false, process.getPid());
                         if (handle != null) {
                             getLogger().info("Terminating process " + process.getPid());
@@ -69,7 +69,7 @@ public class ProcessMonitorServiceWin32JnaImpl extends AbstractProcessMonitorSer
                             } else {
                                 process.setState(ProcessState.RUNNING);
                                 getLogger()
-                                        .warn(String.format("Process PID %d could not be stopped. Kernel32.GetLastError(): %d", process.getPid(),
+                                        .warn(String.format("Process PID %d could not be stopped. Kernel32Lib.GetLastError(): %d", process.getPid(),
                                                 k32.GetLastError()));
                             }
                             k32.CloseHandle(handle);

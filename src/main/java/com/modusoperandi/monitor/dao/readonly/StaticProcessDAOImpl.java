@@ -79,6 +79,7 @@ public class StaticProcessDAOImpl implements ProcessDAO {
                 key = keyIterator.next();
                 if (hostname.matches(key)) {
                     setProcesses(processes.get(key));
+                    break;
                 }
             }
         }

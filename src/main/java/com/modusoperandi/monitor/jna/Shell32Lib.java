@@ -10,8 +10,8 @@ import com.sun.jna.win32.W32APIOptions;
  * 
  * @author Silvio Molinari
  */
-public interface Shell32 extends com.sun.jna.platform.win32.Shell32 {
-    Shell32 SHELL32 = (Shell32) Native.loadLibrary("shell32", Shell32.class, W32APIOptions.UNICODE_OPTIONS);
+public interface Shell32Lib extends com.sun.jna.platform.win32.Shell32 {
+    Shell32Lib SHELL32 = (Shell32Lib) Native.loadLibrary("shell32", Shell32Lib.class, W32APIOptions.UNICODE_OPTIONS);
 
     HINSTANCE ShellExecute(int i, String lpVerb, String lpFile, String lpParameters, String lpDirectory, int nShow);
 }
