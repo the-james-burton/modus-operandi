@@ -92,7 +92,7 @@ public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorServ
             try {
                 getLogger().info("Sending WM_CLOSE to pid " + window.getPid());
                 User32.SendMessage(new HWND((int) ((JNativeWindow) window).getKey()), new UINT(WM.WM_CLOSE.getValue()), new WPARAM(0), new LPARAM(0));
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 getLogger().error("Error sending WM_CLOSE to pid " + window.getPid());
             }
         }
@@ -129,7 +129,7 @@ public class ProcessMonitorServiceJNativeImpl extends AbstractProcessMonitorServ
                         break;
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 getLogger().error("Error sending killing pid " + process.getPid());
             }
         }

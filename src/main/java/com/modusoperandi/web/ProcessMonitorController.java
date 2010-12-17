@@ -214,7 +214,7 @@ public class ProcessMonitorController {
             services.refresh();
             // return environment name so it can be displayed
             model.addAttribute("output", services.getEnvironment());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             model.addAttribute("output", e.getMessage());
             log.error("Bulk operation failed.", e);

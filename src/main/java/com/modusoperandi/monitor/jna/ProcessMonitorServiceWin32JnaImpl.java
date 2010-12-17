@@ -82,7 +82,7 @@ public class ProcessMonitorServiceWin32JnaImpl extends AbstractProcessMonitorSer
                         break;
                     }
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 getLogger().error("Error sending killing pid " + process.getPid());
             }
         }

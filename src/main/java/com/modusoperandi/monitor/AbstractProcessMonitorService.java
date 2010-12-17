@@ -74,7 +74,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     /**
      * Configurable time to wait for a process detection at start time.
      */
-    private final long           startUpDetectionWaitTime            = DEFAULT_STARTUP_DETECTION_WAIT_TIME;
+    private long           startUpDetectionWaitTime            = DEFAULT_STARTUP_DETECTION_WAIT_TIME;
     /**
      * Configurable time to wait for a process to shut down gracefully.
      */
@@ -82,7 +82,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     /**
      * Sleep time during checks.
      */
-    private final long           startUpDetectionInterval            = DEFAULT_STARTUP_DETECTION_INTERVAL;
+    private long           startUpDetectionInterval            = DEFAULT_STARTUP_DETECTION_INTERVAL;
     /**
      * This machine's name.
      */
@@ -105,9 +105,9 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         for (Window window : windows.values()) {
             if (window.getPid() == pid) {
                 Process process = getProcess(window.getName());
-                ProcessState preState = process.getState();
                 found = process != null;
                 if (found && !process.isStopping()) {
+                    ProcessState preState = process.getState();
                     process.setState(STOPPING);
                     try {
                         killRequested = true;
@@ -193,16 +193,18 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
     }
 
     public final synchronized void startProcess(Process process) throws ProcessMonitorServiceException {
-        logger.info("Starting : " + process);
-        if (process == null || process.isStarting() || process.isRunning()) {
+        if (process == null) {
+            logger.info("Ignoring start request for null process");
+        } else if (process.isStarting() || process.isRunning()) {
             logger.info("Ignoring request for start for " + process.getWindowTitle());
-            return;
-        }
+        } else {
+        logger.info("Starting : " + process);
         // flag this
         process.setState(STARTING);
         // perform the check in the background as this could take a while!
         Thread startUpCheckerThread = new Thread(new StartUpThread(process), "StartUpChecker[" + process.getWindowTitle() + "]");
         startUpCheckerThread.start();
+        }
     }
 
     protected abstract void startProcessSpecificImpl(Process process) throws ProcessMonitorServiceException;
@@ -244,7 +246,7 @@ public abstract class AbstractProcessMonitorService extends TimerTask implements
         return processes != null ? new ArrayList<Process>(processes.values()) : new ArrayList<Process>();
     }
 
-    public void setProcessDAO(ProcessDAO processDAO) {
+    public synchronized void setProcessDAO(ProcessDAO processDAO) {
         this.processDAO = processDAO;
     }
 

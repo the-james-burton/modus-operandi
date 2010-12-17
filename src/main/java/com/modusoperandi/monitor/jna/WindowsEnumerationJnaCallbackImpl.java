@@ -58,7 +58,7 @@ public class WindowsEnumerationJnaCallbackImpl implements WNDENUMPROC {
         return true;
     }
 
-    public class JnaWindow extends Window {
+    public static class JnaWindow extends Window {
         private HWND handle;
 
         public JnaWindow(int pid, String name) {

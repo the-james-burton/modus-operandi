@@ -44,7 +44,7 @@ public class WindowsEnumerationJNativeCallbackImpl implements Callback {
                     window.key = key;
                     windows.put(windowName, window);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error("Failed to process window handle " + key);
             }
         }
@@ -86,7 +86,7 @@ public class WindowsEnumerationJNativeCallbackImpl implements Callback {
         return JNative.createCallback(2, this);
     }
 
-    public class JNativeWindow extends Window {
+    public static class JNativeWindow extends Window {
         private long key;
         public JNativeWindow(int pid, String name) {
             super(pid, name);

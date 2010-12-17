@@ -1,6 +1,7 @@
 package com.modusoperandi.monitor.ext;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -35,17 +36,26 @@ public class ProcessMonitorServiceUnixExternalProcessImpl extends AbstractProces
     @Override
     protected void refreshSpecificImpl() throws ProcessMonitorServiceException {
         logger.info("Refreshing...");
+        BufferedReader br = null;
         try {
+            
+            
+            
+            
             java.lang.Process process = new ProcessBuilder("/bin/ps", "-ef").start();
             InputStream is = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
+            br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
                 System.out.println(line);
             }
         } catch (Exception e) {
             throw new ProcessMonitorServiceException(e.getMessage(), e);
+        } finally {
+            if (br != null) {
+                try { br.close(); } catch (IOException e) {}
+            }
         }
     }
 

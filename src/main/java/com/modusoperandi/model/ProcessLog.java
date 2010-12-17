@@ -22,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,8 +33,8 @@ import com.modusoperandi.monitor.ProcessMonitorServiceException;
 public class ProcessLog extends TimerTask {
     private static final DateFormat dateFormat              = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final Log               logger                  = LogFactory.getLog(this.getClass());
-    private final int               DEFAULT_LOG_SIZE        = 5000;
-    private final int               DEFAULT_NUMBER_OF_LINES = 20;
+    private static final int       DEFAULT_LOG_SIZE        = 5000;
+    private static final int       DEFAULT_NUMBER_OF_LINES = 20;
     private Long                    id;
     private String                  pathfilename;
     private int                     bytes                   = DEFAULT_LOG_SIZE;
@@ -246,9 +247,9 @@ public class ProcessLog extends TimerTask {
                     for (String line : text) {
                         tail.append(encodeHTML(line) + "\n");
                     }
+                    // make a note of the last modified date...
+                    lastModified = dateFormat.format(new Date(logFile.lastModified()));
                 }
-                // make a note of the last modified date...
-                lastModified = dateFormat.format(new Date(logFile.lastModified()));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -263,14 +264,16 @@ public class ProcessLog extends TimerTask {
 
     private void read(RandomAccessFile log) throws IOException {
         byte[] buffer = new byte[bytes];
-        log.read(buffer);
+        int byteCount = log.read(buffer);
+        if (byteCount > -1) {
         pointer = log.getFilePointer();
         BufferedReader input = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buffer)));
         while (input.ready()) {
             String line = input.readLine();
-            if (!"".equals(line.trim())) {
+            if (!StringUtils.isBlank(line)) {
                 text.add(line);
             }
+        }
         }
     }
 

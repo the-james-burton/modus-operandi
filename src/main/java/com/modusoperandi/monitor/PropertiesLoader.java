@@ -258,7 +258,7 @@ public class PropertiesLoader extends TimerTask {
      * 
      * @author Silvio Molinari
      */
-    private class Entry {
+    private static class Entry {
         long       lastModified;
         Properties props;
     }
