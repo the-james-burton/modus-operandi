@@ -11,7 +11,7 @@
 			<property name="key" value="ENVIRONMENT_NAME"/>
 		</bean>
 		<bean id="propertiesLoaderInputDir" class="com.modusoperandi.model.ConfigEntry">
-			<property name="value" value="\\lonms03418\cruise\builds\analysis.finesse\reports\config\properties"/>
+			<property name="value" value="c:/temp/reports/config/properties"/>
 			<property name="key" value="PROPERTIES_LOADER_INPUT_DIR"/>
 		</bean>
 	</util:list>
