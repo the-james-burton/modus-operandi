@@ -3,3 +3,9 @@ syntax: regexp
 ^target$
 syntax: regexp
 ^src/local-lib$
+syntax: regexp
+^\.classpath$
+syntax: regexp
+^\.project$
+syntax: regexp
+^\.settings$
