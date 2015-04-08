@@ -1,0 +1,3 @@
+The web interface looks like this...
+
+<img src='https://modus-operandi.googlecode.com/hg/doc/screenshots/modus-operandi-sample.jpg' alt='sector report' title='sector report' width='640' height='377' />
